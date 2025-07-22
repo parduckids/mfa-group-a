@@ -1,0 +1,28 @@
+[
+  {
+    "Name": "Johnny Appleseed",
+    "Address Line 1": "123 High St",
+    "Address Line 2": "2nd Floor",
+    "Address Line 3": "Unit 4",
+    "City": "London",
+    "State": "",
+    "Zip Code": "LL1 1AA",
+    "Country": "United Kingdom",
+    "Phone Number": "05555555555",
+    "ID": 1,
+    "Type": "Client"
+  },
+  {
+    "Name": "Susie Pear",
+    "Address Line 1": "321 King's Court",
+    "Address Line 2": "",
+    "Address Line 3": "",
+    "City": "Toronto",
+    "State": "Ontario",
+    "Zip Code": "L1L 2K2",
+    "Country": "Canada",
+    "Phone Number": "+15552220011",
+    "ID": 2,
+    "Type": "Client"
+  }
+]

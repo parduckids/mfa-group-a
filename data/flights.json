@@ -1,0 +1,10 @@
+[
+  {
+    "Client_ID": 1,
+    "Airline_ID": 1,
+    "Date": "2025-08-10T09:15",
+    "Start City": "London",
+    "End City": "Stockholm",
+    "Type": "Flight"
+  }
+]
