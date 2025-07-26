@@ -4,6 +4,31 @@ from nicegui import ui
 
 # Login
 
+# store login state
+agent_logged_in = False
+
+# placeholders for dynamic elements
+agent_dashboard = None
+
+
+def handle_login(username_input, password_input):
+    '''Checks the entered credentials and logs in the agent if valid
+    hides the welcome screen and shows the agent dashboard on successful login.In case the credentials are invalid, shows an error notification.'''
+    if username_input.value == 'admin' and password_input.value == 'admin':
+        ui.notify('login successful', type='positive')
+        splitter.set_visibility(False)
+        agent_dashboard.set_visibility(True)
+    else:
+        ui.notify('invalid credentials', type='negative')
+
+
+def logout():
+    '''Logs out the agent and returns to the welcome screen
+    hides the agent dashboard and makes the split view visible again.'''
+    agent_dashboard.set_visibility(False)
+    splitter.set_visibility(True)
+    ui.notify('logged out')
+
 # create a splitter that divides the screen, starts on 50/50
 with ui.splitter(value=50).classes('w-full h-screen') as splitter:
 
@@ -13,9 +38,9 @@ with ui.splitter(value=50).classes('w-full h-screen') as splitter:
         with ui.card().classes('w-full h-full').on('click', lambda: splitter.set_value(90)):
             with ui.column().classes('w-full items-center gap-4'):
                 ui.label('Agent Login').classes('text-2xl font-bold')
-                ui.input('Username').props('outlined')
-                ui.input('Password', password=True, password_toggle_button=True).props('outlined')
-                ui.button('Login')
+                username_input = ui.input('Username').props('outlined')
+                password_input = ui.input('Password', password=True, password_toggle_button=True).props('outlined')
+                ui.button('Login', on_click=lambda: handle_login(username_input, password_input))
 
     # right panel:flight search
     with splitter.after:
@@ -45,5 +70,13 @@ with ui.splitter(value=50).classes('w-full h-screen') as splitter:
                 with ui.row().classes('mt-4'):
                     with ui.card().classes('bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-md shadow-sm'):
                         ui.label('⚠️ No matching flights found. Please check the details and try again.').classes('text-sm')
+
+# agent dashboard (only visible after successful login)
+with ui.card().classes('w-full h-screen items-center justify-center hidden') as agent_dashboard:
+    agent_dashboard.set_visibility(False)
+    with ui.column().classes('items-center gap-4 p-6'):
+        ui.label('Agent Dashboard').classes('text-3xl font-bold')
+        ui.label('this is the protected agent view after login')
+        ui.button('Logout', on_click=logout)
 
 ui.run()
