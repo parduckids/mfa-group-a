@@ -101,6 +101,105 @@ def get_next_airline_id():
         return max(int(a.get('ID', 0)) for a in airlines) + 1
     return 1
 
+def create_client():
+    """
+    Create a new client record and save it to the client file.
+
+    This function:
+    - Generates a new unique client ID.
+    - Collects input values into a record.
+    - Sets the 'ID' and 'Type' fields.
+    - Appends the new client to the clients list.
+    - Persists the data to the Client JSON file.
+    - Notifies the user of success.
+    - Clears the input fields.
+
+    Returns:
+        None
+    """
+    new_id = get_next_client_id()
+    record = {key: inp.value for key, inp in inputs.items()}
+    record['ID'] = new_id
+    record['Type'] = 'Client'
+
+    clients.append(record)
+    save_json(client_file, clients)
+
+    ui.notify(f'Client created with ID {new_id:09d}')
+
+    for inp in inputs.values():
+        inp.value = ''
+
+def create_airline():
+    """
+    Create a new airline record and save it to the airline file.
+
+    This function:
+    - Generates a new unique airline ID.
+    - Builds a record using the input company name.
+    - Sets the 'ID', 'Type' and 'Company Name' fields.
+    - Appends the new airline to the airlines list.
+    - Persists the data to the Airline JSON file.
+    - Notifies the user of success.
+    - Clears the input field.
+
+    Returns:
+        None
+    """
+    new_id = get_next_airline_id()
+    record = {
+        'ID': new_id,
+        'Type': 'Airline',
+        'Company Name': airline_input.value
+    }
+
+    airlines.append(record)
+    save_json(airline_file, airlines)
+
+    ui.notify(f'Airline created with ID {new_id:09d}')
+
+    airline_input.value = ''
+
+
+def create_flight():
+    """
+    Create a new flight record and save it to the flight file.
+
+    This function:
+    - Collects flight details from user input fields.
+    - Builds a flight record with client, airline, date, and cities.
+    - Adds the 'Client_ID', 'Airline_ID', 'Date', 'Start City', 'End City' and 'Type' fields.
+    - Appends the record to the flights list.
+    - Saves the updated list to a JSON file.
+    - Notifies the user of success.
+    - Clears the input fields.
+
+    Returns:
+        None
+    """
+    record = {
+        'Client_ID': client_select.value,
+        'Airline_ID': airline_select.value,
+        'Date': date_input.value,
+        'Start City': start_city_input.value,
+        'End City': end_city_input.value,
+        'Type': 'Flight'
+    }
+
+    flights.append(record)
+    save_json(flight_file, flights)
+
+    ui.notify('Flight created')
+
+    for inp in [
+        client_select,
+        airline_select,
+        date_input,
+        start_city_input,
+        end_city_input
+    ]:
+        inp.value = ''
+
 # ----- UI Structure (80% width centered) -----
 with ui.column().classes('w-4/5 mx-auto'):
 
@@ -138,7 +237,7 @@ with ui.column().classes('w-4/5 mx-auto'):
                                 continue
                             inputs[field] = ui.input(label=field).classes('w-full mb-2')
 
-                        ui.button('Create Client').classes('mt-2 w-full')
+                        ui.button('Create Client', on_click = create_client).classes('mt-2 w-full')
 
                 # ---- Manage Client ----
                 with ui.tab_panel(tab_client_manage):
@@ -158,6 +257,111 @@ with ui.column().classes('w-4/5 mx-auto'):
                         ).classes('w-full mb-4')
 
                         ui.button('Search').classes('w-full')
+
+        # ------- Airline Records -------
+        with ui.tab_panel(tab_airlines):
+
+            with ui.row().classes('w-full justify-center mb-4'):
+                ui.label('Airline Records').classes('text-xl')
+
+            # Airline sub-tabs: Create and Manage
+            with ui.tabs().classes('w-full') as airline_ops:
+                tab_airline_create = ui.tab('Create')
+                tab_airline_manage = ui.tab('Manage')
+
+            with ui.tab_panels(airline_ops).classes('w-full'):
+
+                # ---- Create Airline ----
+                with ui.tab_panel(tab_airline_create):
+                    with ui.row().classes('w-full justify-center mb-2'):
+                        ui.label('New Airline').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        airline_input = ui.input(label='Company Name').classes('w-full mb-2')
+                        ui.button('Create Airline', on_click = create_airline).classes('mt-2 w-full')
+
+                # ---- Manage Airline ----
+                with ui.tab_panel(tab_airline_manage):
+                    with ui.row().classes('w-full justify-center mb-2'):
+                        ui.label('Search / Update / Delete').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        search_airline_id = ui.input(label='Airline ID').classes('w-full mb-2')
+
+                        table_airlines = ui.table(
+                            columns=[
+                                {'name': n, 'label': n, 'field': n} for n in airline_fields
+                            ],
+                            rows=[],
+                            row_key='ID',
+                            pagination={'page_size': 5}
+                        ).classes('w-full mb-4')
+
+                        ui.button('Search').classes('w-full')
+
+        # ------- Flight Records -------
+        with ui.tab_panel(tab_flights):
+
+            with ui.row().classes('w-full justify-center mb-4'):
+                ui.label('Flight Records').classes('text-xl')
+
+            # Flight sub-tabs: Create and Manage
+            with ui.tabs().classes('w-full') as flight_ops:
+                tab_flight_create = ui.tab('Create')
+                tab_flight_manage = ui.tab('Manage')
+
+            with ui.tab_panels(flight_ops).classes('w-full'):
+
+                # ---- Create Flight ----
+                with ui.tab_panel(tab_flight_create):
+                    with ui.row().classes('w-full justify-center mb-2'):
+                        ui.label('New Flight').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+
+                        # Dropdown: Select client
+                        client_select = ui.select(
+                            label='Client',
+                            options={
+                                c['ID']: f"{c['Name']} {int(c['ID']):09d}"
+                                for c in clients
+                            }
+                        ).props('searchable true clearable').classes('w-full mb-2')
+
+                        # Dropdown: Select airline
+                        airline_select = ui.select(
+                            label='Airline',
+                            options={
+                                a['ID']: f"{a['Company Name']} {int(a['ID']):09d}"
+                                for a in airlines
+                            }
+                        ).props('searchable true clearable').classes('w-full mb-2')
+
+                        # Input fields
+                        date_input = ui.input(label='Date').props('type="datetime-local"').classes('w-full mb-2')
+                        start_city_input = ui.input(label='Start City').classes('w-full mb-2')
+                        end_city_input = ui.input(label='End City').classes('w-full mb-2')
+
+                        ui.button('Create Flight', on_click = create_flight).classes('mt-2 w-full')
+
+                # ---- Manage Flight ----
+                with ui.tab_panel(tab_flight_manage):
+                    with ui.row().classes('w-full justify-center mb-2'):
+                        ui.label('Search / Update / Delete').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        search_flight_id = ui.input(label='Client ID').classes('w-full mb-2')
+
+                        table_flights = ui.table(
+                            columns=flight_manage_columns,
+                            rows=[],
+                            row_key='Date',
+                            pagination={'page_size': 5}
+                        ).classes('w-full mb-4')
+
+                        ui.button('Search').classes('w-full')
+
+ui.run(title = 'Travel Agent Record Manager', reload = True)
 
 def startup() -> None:
     # Login
