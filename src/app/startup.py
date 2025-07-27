@@ -512,36 +512,37 @@ def startup() -> None:
     """Initializes the application, setting up the login screen and the protected agent dashboard."""
 
     def perform_flight_search(client_input, airline_input, container, all_clients, all_airlines, all_flights):
-        """Searches for a flight and displays the result in a given container."""
+        """Searches for all matching flights and displays a card for each."""
         client_q = client_input.value
         airline_q = airline_input.value
 
-        found_flight = None
-        # Search for a flight matching both Client ID and Airline ID
-        for f in all_flights:
-            if str(f.get('Client_ID')) == str(client_q) and str(f.get('Airline_ID')) == str(airline_q):
-                found_flight = f
-                break
+        # Find ALL matching flights and store them in a list
+        found_flights = [
+            f for f in all_flights
+            if str(f.get('Client_ID')) == str(client_q) and str(f.get('Airline_ID')) == str(airline_q)
+        ]
         # Clear previous results
         container.clear()
 
         with container:
-            if found_flight:
-                # --- Success Card ---
-                client = next((c for c in all_clients if c['ID'] == found_flight['Client_ID']), {})
-                airline = next((a for a in all_airlines if a['ID'] == found_flight['Airline_ID']), {})
+            if found_flights:
+                ui.label(f'Found {len(found_flights)} matching flight(s):').classes('text-sm text-gray-600 mb-2')
+                # Loop through each found flight and create a card for it
+                for flight in found_flights:
+                    client = next((c for c in all_clients if c['ID'] == flight['Client_ID']), {})
+                    airline = next((a for a in all_airlines if a['ID'] == flight['Airline_ID']), {})
 
-                with ui.card().classes('w-full p-4 bg-gray-100'):
-                    ui.label(f'Your flight to {found_flight.get("End City", "your destination")}').classes(
-                        'text-lg font-bold text-gray-700 mb-2')
-                    with ui.column().classes('gap-1'):
-                        ui.label(f'Client: {client.get("Name", "N/A")} ({found_flight.get("Client_ID")})')
-                        ui.label(f'Airline: {airline.get("Company Name", "N/A")} ({found_flight.get("Airline_ID")})')
-                        ui.label(f'Date: {found_flight.get("Date", "N/A")}')
-                        ui.label(f'From: {found_flight.get("Start City", "N/A")}')
-                        ui.label(f'To: {found_flight.get("End City", "N/A")}')
+                    with ui.card().classes('w-full p-4 bg-gray-100 mb-4'):
+                        ui.label(f'Your flight to {flight.get("End City", "your destination")}').classes(
+                            'text-lg font-bold text-gray-700 mb-2')
+                        with ui.column().classes('gap-1'):
+                            ui.label(f'Client: {client.get("Name", "N/A")} ({flight.get("Client_ID")})')
+                            ui.label(f'Airline: {airline.get("Company Name", "N/A")} ({flight.get("Airline_ID")})')
+                            ui.label(f'Date: {flight.get("Date", "N/A")}')
+                            ui.label(f'From: {flight.get("Start City", "N/A")}')
+                            ui.label(f'To: {flight.get("End City", "N/A")}')
             else:
-                # --- Error Card ---
+                # Error Card for when no flights are found
                 with ui.card().classes('bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-md shadow-sm'):
                     ui.label('⚠️ No matching flights found. Please check the details and try again.').classes('text-sm')
 
