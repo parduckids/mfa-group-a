@@ -528,7 +528,8 @@ def startup() -> None:
                     password_input = ui.input('Password', password=True, password_toggle_button=True).props('outlined')
                     ui.button('Login', on_click=lambda: handle_login(username_input, password_input))
         with splitter.after:
-            with ui.card().classes('w-full h-full').on('click', lambda: splitter.set_value(10)):
+            # when card is clicked, it sets the splitter value to 10
+            with ui.card().classes('w-full h-full flight-card').on('click', lambda: splitter.set_value(10)):
                 with ui.column().classes('w-full items-center gap-4'):
                     ui.label('Flight Search ✈️').classes('text-2xl font-bold')
                     ui.label('Welcome! Please provide the flight details.')
@@ -553,7 +554,8 @@ def startup() -> None:
                             ui.label('⚠️ No matching flights found. Please check the details and try again.').classes(
                                 'text-sm')
 
-    with ui.card().classes('w-full h-screen hidden p-0') as agent_dashboard:
+    # agent dashboard (only visible after successful login)
+    with ui.card().classes('w-full h-screen hidden p-0 dashboard-card') as agent_dashboard:
         agent_dashboard.set_visibility(False)
         with ui.column().classes('w-full items-center gap-4 p-6'):
             with ui.row(wrap=False).classes('w-full justify-between items-center'):
@@ -561,6 +563,15 @@ def startup() -> None:
                 ui.button('Logout', on_click=logout)
 
             build_agent_view()
+    # Create marker for the bound level so it can be captured by the test 
+    ui.label().bind_text_from(splitter, 'value').classes('splitter-value')
 
 
 ui.run(title='Travel Agent Record Manager', reload=True)
+
+
+
+# Render the full UI once the path is visited - used for testing
+@ui.page('/')
+def index():
+    startup()
