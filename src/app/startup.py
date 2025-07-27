@@ -568,6 +568,10 @@ def startup() -> None:
 
 
 ui.run(title='Travel Agent Record Manager', reload=True)
+# Render the full UI once the path is visited - used for testing
+@ui.page('/')
+def index():
+    startup()
 
 
 
