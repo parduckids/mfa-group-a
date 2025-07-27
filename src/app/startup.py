@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 # Paths for data files
-data_dir = Path(__file__).parent / 'data'
+data_dir = Path(__file__).parent.parent / 'data'
 client_file = data_dir / 'clients.json'
 airline_file = data_dir / 'airlines.json'
 flight_file = data_dir / 'flights.json'
@@ -25,6 +25,7 @@ def load_json(path, default=list):
     Returns:
         Any: The parsed JSON data, or the result of `default()` if the file is missing.
     """
+
     if not path.exists():
         return default()
     return json.loads(path.read_text())
@@ -101,6 +102,7 @@ def get_next_airline_id():
         return max(int(a.get('ID', 0)) for a in airlines) + 1
     return 1
 
+
 def create_client():
     """
     Create a new client record and save it to the client file.
@@ -159,7 +161,6 @@ def create_airline():
     ui.notify(f'Airline created with ID {new_id:09d}')
 
     airline_input.value = ''
-
 
 def create_flight():
     """
@@ -220,6 +221,7 @@ def load_clients():
         c.copy() for c in clients
         if str(c.get('ID', '')).strip() == q
     ]
+
 
     for r in matched:
         r['ID'] = f"{int(r['ID']):09d}"
