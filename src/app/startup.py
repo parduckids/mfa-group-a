@@ -42,7 +42,7 @@ def startup() -> None:
         # right panel:flight search
         with splitter.after:
             # when card is clicked, it sets the splitter value to 10
-            with ui.card().classes('w-full h-full').on('click', lambda: splitter.set_value(10)):
+            with ui.card().classes('w-full h-full flight-card').on('click', lambda: splitter.set_value(10)):
                 with ui.column().classes('w-full items-center gap-4'):
                     ui.label('Flight Search ✈️').classes('text-2xl font-bold')
                     ui.label('Welcome! Please provide the flight details.')
@@ -72,9 +72,17 @@ def startup() -> None:
                                 'text-sm')
 
     # agent dashboard (only visible after successful login)
-    with ui.card().classes('w-full h-screen items-center justify-center hidden') as agent_dashboard:
+    with ui.card().classes('w-full h-screen items-center justify-center hidden dashboard-card') as agent_dashboard:
         agent_dashboard.set_visibility(False)
         with ui.column().classes('items-center gap-4 p-6'):
             ui.label('Agent Dashboard').classes('text-3xl font-bold')
             ui.label('this is the protected agent view after login')
             ui.button('Logout', on_click=logout)
+
+    # Create marker for the bound level so it can be captured by the test 
+    ui.label().bind_text_from(splitter, 'value').classes('splitter-value')
+
+# Render the full UI once the path is visited - used for testing
+@ui.page('/')
+def index():
+    startup()
