@@ -562,5 +562,12 @@ def startup() -> None:
 
             build_agent_view()
 
+    # Create marker for the bound level so it can be captured by the test 
+    ui.label().bind_text_from(splitter, 'value').classes('splitter-value')
 
 ui.run(title='Travel Agent Record Manager', reload=True)
+
+# Render the full UI once the path is visited - used for testing
+@ui.page('/')
+def index():
+    startup()
