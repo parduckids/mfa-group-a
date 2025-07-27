@@ -101,6 +101,64 @@ def get_next_airline_id():
         return max(int(a.get('ID', 0)) for a in airlines) + 1
     return 1
 
+# ----- UI Structure (80% width centered) -----
+with ui.column().classes('w-4/5 mx-auto'):
+
+    # Main Tabs
+    with ui.tabs().classes('w-full') as main_tabs:
+        tab_clients = ui.tab('Clients')
+        tab_airlines = ui.tab('Airlines')
+        tab_flights = ui.tab('Flights')
+
+    with ui.tab_panels(main_tabs).classes('w-full'):
+
+        # ------- Client Records -------
+        with ui.tab_panel(tab_clients):
+
+            # Section title
+            with ui.row().classes('w-full justify-center mb-4'):
+                ui.label('Client Records').classes('text-xl')
+
+            # Client sub-tabs: Create and Manage
+            with ui.tabs().classes('w-full') as client_ops:
+                tab_client_create = ui.tab('Create')
+                tab_client_manage = ui.tab('Manage')
+
+            with ui.tab_panels(client_ops).classes('w-full'):
+
+                # ---- Create Client ----
+                with ui.tab_panel(tab_client_create):
+                    with ui.row().classes('w-full justify-center mb-2'):
+                        ui.label('New Client').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        inputs = {}
+                        for field in client_fields:
+                            if field in ['ID', 'Type']:
+                                continue
+                            inputs[field] = ui.input(label=field).classes('w-full mb-2')
+
+                        ui.button('Create Client').classes('mt-2 w-full')
+
+                # ---- Manage Client ----
+                with ui.tab_panel(tab_client_manage):
+                    with ui.row().classes('w-full justify-center mb-2'):
+                        ui.label('Search / Update / Delete').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        search_id = ui.input(label='Client ID').classes('w-full mb-2')
+
+                        table_clients = ui.table(
+                            columns=[
+                                {'name': f, 'label': f, 'field': f} for f in client_fields
+                            ],
+                            rows=[],
+                            row_key='ID',
+                            pagination={'page_size': 5}
+                        ).classes('w-full mb-4')
+
+                        ui.button('Search').classes('w-full')
+
 def startup() -> None:
     # Login
     # store login state
