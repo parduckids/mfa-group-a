@@ -289,6 +289,173 @@ def load_flights():
 
     table_flights.rows = matched
 
+
+edit_dialog = None
+edit_inputs = {}
+edit_airline_inputs = {}
+edit_flight_inputs = {}
+
+def edit_clients():
+    """
+    Open a dialog to edit an existing client's information.
+
+    This function searches for a client by the ID entered in the `search_id` input field.
+    If a matching client is found, a dialog is displayed with input fields pre-filled with
+    the client's data. The user can edit all fields except 'ID' and 'Type'. Upon saving,
+    the client's data is updated and saved to a JSON file.
+
+    The dialog includes options to save changes or cancel the operation.
+    If the client ID is not found, a warning notification is shown.
+    """
+    q = search_id.value.strip()
+
+    client = next((c for c in clients if str(c.get('ID', '')).strip() == q), None)
+
+    if not client:
+        ui.notify('Client not found', type='warning')
+        return
+
+    # Clear old inputs if any
+    edit_inputs.clear()
+
+    with ui.dialog() as dialog, ui.card():
+        ui.label(f"Edit Client ID: {int(client['ID']):09d}").classes("text-lg font-bold mb-2")
+
+        for field in client_fields:
+            if field == 'ID':
+                edit_inputs[field] = ui.input(label=field, value=str(client.get(field, ''))).props('readonly').classes(
+                    'mb-2 w-full')
+            elif field == 'Type':
+                edit_inputs[field] = ui.input(label=field, value=str(client.get(field, ''))).props('readonly').classes(
+                    'mb-2 w-full')
+            else:
+                edit_inputs[field] = ui.input(label=field, value=client.get(field, '')).classes('mb-2 w-full')
+
+        def save_changes():
+            """
+            Save the modified client data and update the UI.
+
+            This function collects the current values from the edit input fields,
+            updates the client object, saves all clients to the JSON file, refreshes
+            the UI table if visible, and displays a success notification. Finally, it
+            closes the edit dialog.
+            """
+            for field in client_fields:
+                client[field] = edit_inputs[field].value
+
+            save_json(client_file, clients)
+            load_clients()  # refresh the table if visible
+            ui.notify('Client updated successfully', type='positive')
+            dialog.close()
+
+        ui.button('Save Changes', on_click=save_changes).classes('mt-2 w-full')
+        ui.button('Cancel', on_click=dialog.close).classes('mt-2 w-full')
+
+    dialog.open()
+
+def edit_airlines():
+    """
+    Open a dialog to edit an existing airline's information.
+
+    This function searches for an airline using the ID provided in the `search_airline_id`
+    input field. If the airline is found, a dialog is presented with the current details
+    pre-filled. Fields 'ID' and 'Type' are shown as read-only. Users may edit the other
+    fields and choose to either save the changes or cancel the operation.
+
+    If no airline is found matching the entered ID, a warning notification is displayed.
+    """
+    q = search_airline_id.value.strip()
+
+    airline = next((a for a in airlines if str(a.get('ID', '')).strip() == q), None)
+
+    if not airline:
+        ui.notify('Airline not found', type='warning')
+        return
+
+    edit_airline_inputs.clear()
+
+    with ui.dialog() as dialog, ui.card():
+        ui.label(f"Edit Airline ID: {int(airline['ID']):09d}").classes("text-lg font-bold mb-2")
+
+        for field in airline_fields:
+            if field == 'ID' or field == 'Type':
+                edit_airline_inputs[field] = ui.input(label=field, value=str(airline.get(field, ''))).props('readonly').classes('mb-2 w-full')
+            else:
+                edit_airline_inputs[field] = ui.input(label=field, value=airline.get(field, '')).classes('mb-2 w-full')
+
+        def save_airline():
+            """
+              Save the modified airline data and update the UI.
+
+              This function retrieves values from the input fields, updates the corresponding
+              airline record, writes all airline data back to the JSON file, refreshes the
+              airline table in the UI, shows a success notification, and closes the dialog.
+              """
+            for field in airline_fields:
+                airline[field] = edit_airline_inputs[field].value
+            save_json(airline_file, airlines)
+            load_airlines()
+            ui.notify('Airline updated successfully', type='positive')
+            dialog.close()
+
+        ui.button('Save Changes', on_click=save_airline).classes('mt-2 w-full')
+        ui.button('Cancel', on_click=dialog.close).classes('mt-2 w-full')
+
+    dialog.open()
+
+def edit_flights():
+    """
+    Open a dialog to edit an existing flight's information.
+
+    This function searches for a flight using the `Client_ID` entered in the
+    `search_flight_id` input field. If a matching flight is found, a dialog
+    is displayed containing input fields pre-filled with the flight's current data.
+    The user may edit the fields and choose to save the changes or cancel the operation.
+
+    If the flight is not found, a warning notification is displayed.
+    """
+    q = search_flight_id.value.strip()
+
+    flight = next((f for f in flights if str(f.get('Client_ID', '')).strip() == q), None)
+
+    if not flight:
+        ui.notify('Flight not found', type='warning')
+        return
+
+    edit_flight_inputs.clear()
+
+    with ui.dialog() as dialog, ui.card():
+        ui.label(f"Edit Flight for Client ID: {flight.get('Client_ID')}").classes("text-lg font-bold mb-2")
+
+        # Editable fields for flights
+        flight_fields = ['Client_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
+
+        for field in flight_fields:
+            value = flight.get(field, '')
+            edit_flight_inputs[field] = ui.input(label=field, value=value).classes('mb-2 w-full')
+
+        def save_flight():
+            """
+            Save the modified flight data and update the UI.
+
+            This function collects updated values from the input fields, modifies
+            the corresponding flight record, saves the updated list to the JSON file,
+            refreshes the UI flight table, displays a success notification, and closes
+            the dialog.
+            """
+            for field in flight_fields:
+                flight[field] = edit_flight_inputs[field].value
+            save_json(flight_file, flights)
+            load_flights()
+            ui.notify('Flight updated successfully', type='positive')
+            dialog.close()
+
+        ui.button('Save Changes', on_click=save_flight).classes('mt-2 w-full')
+        ui.button('Cancel', on_click=dialog.close).classes('mt-2 w-full')
+
+    dialog.open()
+
+
 # ----- UI Structure (80% width centered) -----
 with ui.column().classes('w-4/5 mx-auto'):
 
@@ -311,6 +478,7 @@ with ui.column().classes('w-4/5 mx-auto'):
             with ui.tabs().classes('w-full') as client_ops:
                 tab_client_create = ui.tab('Create')
                 tab_client_manage = ui.tab('Manage')
+                tab_client_edit = ui.tab('Edit')
 
             with ui.tab_panels(client_ops).classes('w-full'):
 
@@ -338,14 +506,24 @@ with ui.column().classes('w-4/5 mx-auto'):
 
                         table_clients = ui.table(
                             columns=[
-                                {'name': f, 'label': f, 'field': f} for f in client_fields
-                            ],
+                                        {'name': f, 'label': f, 'field': f} for f in client_fields
+                                    ],
                             rows=[],
                             row_key='ID',
                             pagination={'page_size': 5}
                         ).classes('w-full mb-4')
 
                         ui.button('Search', on_click = load_clients).classes('w-full')
+
+                # ---- Edit Clients ----
+                with ui.tab_panel(tab_client_edit):
+                    with ui.row().classes('w-full justify-center mb-4'):
+                        ui.label('Edit Client').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        search_id = ui.input(label='Client ID').classes('w-full mb-2')
+
+                        ui.button('Edit', on_click = edit_clients).classes('w-full')
 
         # ------- Airline Records -------
         with ui.tab_panel(tab_airlines):
@@ -357,6 +535,7 @@ with ui.column().classes('w-4/5 mx-auto'):
             with ui.tabs().classes('w-full') as airline_ops:
                 tab_airline_create = ui.tab('Create')
                 tab_airline_manage = ui.tab('Manage')
+                tab_airline_edit = ui.tab('Edit')
 
             with ui.tab_panels(airline_ops).classes('w-full'):
 
@@ -388,6 +567,16 @@ with ui.column().classes('w-4/5 mx-auto'):
 
                         ui.button('Search', on_click = load_airlines).classes('w-full')
 
+                # ---- Edit Airline ----
+                with ui.tab_panel(tab_airline_edit):
+                    with ui.row().classes('w-full justify-center mb-4'):
+                        ui.label('Edit Airline').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        search_airline_id = ui.input(label='Airline ID').classes('w-full mb-2')
+
+                        ui.button('Edit', on_click = edit_airlines).classes('w-full')
+
         # ------- Flight Records -------
         with ui.tab_panel(tab_flights):
 
@@ -398,6 +587,7 @@ with ui.column().classes('w-4/5 mx-auto'):
             with ui.tabs().classes('w-full') as flight_ops:
                 tab_flight_create = ui.tab('Create')
                 tab_flight_manage = ui.tab('Manage')
+                tab_flight_edit = ui.tab('Edit')
 
             with ui.tab_panels(flight_ops).classes('w-full'):
 
@@ -449,6 +639,16 @@ with ui.column().classes('w-4/5 mx-auto'):
                         ).classes('w-full mb-4')
 
                         ui.button('Search', on_click = load_flights).classes('w-full')
+
+                # ---- Edit Airline ----
+                with ui.tab_panel(tab_airline_edit):
+                    with ui.row().classes('w-full justify-center mb-4'):
+                        ui.label('Edit Flights').classes('text-lg')
+
+                    with ui.card().classes('mx-auto w-full p-4 shadow'):
+                        search_flight_id = ui.input(label='Client ID').classes('w-full mb-2') # TODO: Make unique flight ID
+
+                        ui.button('Edit', on_click=edit_flights).classes('w-full')
 
 def startup() -> None:
     # Login
