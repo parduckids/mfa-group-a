@@ -130,6 +130,10 @@ def build_agent_view():
         clients.append(record)
         save_json(client_file, clients)
 
+        # Update the client dropdown's options.
+        new_client_options = {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients}
+        client_select.set_options(new_client_options)
+
         ui.notify(f'Client created with ID {new_id:09d}')
 
         for inp in inputs.values():
@@ -160,6 +164,10 @@ def build_agent_view():
 
         airlines.append(record)
         save_json(airline_file, airlines)
+
+        # Update the airline dropdown's options.
+        new_airline_options = {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines}
+        airline_select.set_options(new_airline_options)
 
         ui.notify(f'Airline created with ID {new_id:09d}')
 
@@ -474,14 +482,16 @@ def build_agent_view():
                 with ui.tab_panels(flight_ops).classes('w-full'):
                     with ui.tab_panel(tab_flight_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
-                            client_select = ui.select(label='Client',
-                                                      options={c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in
-                                                               clients}).props('searchable true clearable').classes(
-                                'w-full mb-2')
-                            airline_select = ui.select(label='Airline',
-                                                       options={a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a
-                                                                in airlines}).props(
-                                'searchable true clearable').classes('w-full mb-2')
+                            client_select = ui.select(
+                                {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients},
+                                label='Client'
+                            ).props('searchable true clearable').classes('w-full mb-2')
+
+                            airline_select = ui.select(
+                                {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines},
+                                label='Airline'
+                            ).props('searchable true clearable').classes('w-full mb-2')
+
                             date_input = ui.input(label='Date').props('type="datetime-local"').classes('w-full mb-2')
                             start_city_input = ui.input(label='Start City').classes('w-full mb-2')
                             end_city_input = ui.input(label='End City').classes('w-full mb-2')
@@ -500,6 +510,41 @@ def build_agent_view():
 
 def startup() -> None:
     """Initializes the application, setting up the login screen and the protected agent dashboard."""
+
+    def perform_flight_search(client_input, airline_input, container, all_clients, all_airlines, all_flights):
+        """Searches for a flight and displays the result in a given container."""
+        client_q = client_input.value
+        airline_q = airline_input.value
+
+        found_flight = None
+        # Search for a flight matching both Client ID and Airline ID
+        for f in all_flights:
+            if str(f.get('Client_ID')) == str(client_q) and str(f.get('Airline_ID')) == str(airline_q):
+                found_flight = f
+                break
+        # Clear previous results
+        container.clear()
+
+        with container:
+            if found_flight:
+                # --- Success Card ---
+                client = next((c for c in all_clients if c['ID'] == found_flight['Client_ID']), {})
+                airline = next((a for a in all_airlines if a['ID'] == found_flight['Airline_ID']), {})
+
+                with ui.card().classes('w-full p-4 bg-gray-100'):
+                    ui.label(f'Your flight to {found_flight.get("End City", "your destination")}').classes(
+                        'text-lg font-bold text-gray-700 mb-2')
+                    with ui.column().classes('gap-1'):
+                        ui.label(f'Client: {client.get("Name", "N/A")} ({found_flight.get("Client_ID")})')
+                        ui.label(f'Airline: {airline.get("Company Name", "N/A")} ({found_flight.get("Airline_ID")})')
+                        ui.label(f'Date: {found_flight.get("Date", "N/A")}')
+                        ui.label(f'From: {found_flight.get("Start City", "N/A")}')
+                        ui.label(f'To: {found_flight.get("End City", "N/A")}')
+            else:
+                # --- Error Card ---
+                with ui.card().classes('bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-md shadow-sm'):
+                    ui.label('⚠️ No matching flights found. Please check the details and try again.').classes('text-sm')
+
     agent_dashboard = None
 
     def handle_login(username_input, password_input):
@@ -559,6 +604,19 @@ def startup() -> None:
                             # Create a hidden marker for the bound level (after) so it can be captured by the test         
                             ui.label().bind_text_from(splitter, 'value').classes('splitter-value-after hidden')
 
+                    client_id_input = ui.input('Client ID').props('outlined')
+                    airline_id_input = ui.input('Airline ID').props('outlined')
+                    results_container = ui.column().classes('w-full max-w-md mt-4')
+
+                    ui.button('Search', on_click=lambda: perform_flight_search(
+                        client_id_input,
+                        airline_id_input,
+                        results_container,
+                        clients,
+                        airlines,
+                        flights
+                    ))
+
     with ui.card().classes('w-full h-screen hidden p-0') as agent_dashboard:
         agent_dashboard.set_visibility(False)
         with ui.column().classes('w-full items-center gap-4 p-6'):
@@ -573,7 +631,9 @@ def startup() -> None:
 
 ui.run(title='Travel Agent Record Manager', reload=True)
 
+
 # Render the full UI once the path is visited - used for testing
 @ui.page('/')
 def index():
+    """Renders the full UI once the path is visited - used for testing."""
     startup()

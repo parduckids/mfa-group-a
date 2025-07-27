@@ -1,0 +1,26 @@
+[
+  {
+    "Client_ID": 3,
+    "Airline_ID": 1,
+    "Date": "12/07/2026",
+    "Start City": "London",
+    "End City": "Paris",
+    "Type": "Flight"
+  },
+  {
+    "Client_ID": 1,
+    "Airline_ID": 1,
+    "Date": "2025-07-29T00:37",
+    "Start City": "Paris",
+    "End City": "Sidney",
+    "Type": "Flight"
+  },
+  {
+    "Client_ID": 1,
+    "Airline_ID": 1,
+    "Date": "",
+    "Start City": "Sydney",
+    "End City": "Warsaw",
+    "Type": "Flight"
+  }
+]
