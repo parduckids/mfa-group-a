@@ -71,6 +71,36 @@ flight_manage_columns = [
     {'name': 'End City', 'label': 'End City', 'field': 'End City'}
 ]
 
+# Generate next sequential ID for clients
+def get_next_client_id():
+    """
+    Generate the next available client ID.
+
+    Returns the next client ID by finding the maximum existing ID and adding 1.
+    If no clients exist, returns 1.
+
+    Returns:
+        int: The next available client ID.
+    """
+    if clients:
+        return max(int(c.get('ID', 0)) for c in clients) + 1
+    return 1
+
+# Generate next sequential ID for airlines
+def get_next_airline_id():
+    """
+    Generate the next available airline ID.
+
+    Returns the next client ID by finding the maximum existing ID and adding 1.
+    If no clients exist, returns 1.
+
+    Returns:
+        int: The next available airline ID.
+    """
+    if airlines:
+        return max(int(a.get('ID', 0)) for a in airlines) + 1
+    return 1
+
 def startup() -> None:
     # Login
     # store login state
