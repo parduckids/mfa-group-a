@@ -200,6 +200,93 @@ def create_flight():
     ]:
         inp.value = ''
 
+
+def load_clients():
+    """
+    Search for a client by ID and display the result in the clients table.
+
+    This function:
+    - Retrieves and trims the client ID entered in the search input.
+    - Filters the clients list for records matching the given ID.
+    - Formats the ID to a 9-digit string for display.
+    - Updates the table with the matching results.
+
+    Returns:
+        None
+    """
+    q = search_id.value.strip()
+
+    matched = [
+        c.copy() for c in clients
+        if str(c.get('ID', '')).strip() == q
+    ]
+
+    for r in matched:
+        r['ID'] = f"{int(r['ID']):09d}"
+
+    table_clients.rows = matched
+
+def load_airlines():
+    """
+    Search for an airline by ID and display the result in the airlines table.
+
+    This function:
+    - Retrieves and trims the airline ID entered in the search input.
+    - Filters the airlines list for records matching the given ID.
+    - Formats the ID to a 9-digit string for display.
+    - Updates the table with the matching results.
+
+    Returns:
+        None
+    """
+    q = search_airline_id.value.strip()
+
+    matched = [
+        a.copy() for a in airlines
+        if str(a.get('ID', '')).strip() == q
+    ]
+
+    for r in matched:
+        r['ID'] = f"{int(r['ID']):09d}"
+
+    table_airlines.rows = matched
+
+def load_flights():
+    """
+    Search for flights by client ID and display the results in the flights table.
+
+    This function:
+    - Retrieves and trims the client ID entered in the search input.
+    - Filters the flights list for records matching the given client ID.
+    - Resolves the corresponding client and airline names.
+    - Constructs simplified flight records with client name, airline name, date, and cities.
+    - Updates the table with the matching results.
+
+    Returns:
+        None
+    """
+    q = search_flight_id.value.strip()
+    matched = []
+
+    for f in flights:
+        if str(f.get('Client_ID', '')).strip() == q:
+            client = next((c for c in clients if c['ID'] == f['Client_ID']), {})
+            airline = next((a for a in airlines if a['ID'] == f['Airline_ID']), {})
+
+            record = {
+                'Client ID': f.get('Client_ID', ''),
+                'Client': client.get('Name', ''),
+                'Airline ID': f.get('Airline_ID', ''),
+                'Airline': airline.get('Company Name', ''),
+                'Date': f.get('Date', ''),
+                'Start City': f.get('Start City', ''),
+                'End City': f.get('End City', '')
+            }
+
+            matched.append(record)
+
+    table_flights.rows = matched
+
 # ----- UI Structure (80% width centered) -----
 with ui.column().classes('w-4/5 mx-auto'):
 
@@ -256,7 +343,7 @@ with ui.column().classes('w-4/5 mx-auto'):
                             pagination={'page_size': 5}
                         ).classes('w-full mb-4')
 
-                        ui.button('Search').classes('w-full')
+                        ui.button('Search', on_click = load_clients).classes('w-full')
 
         # ------- Airline Records -------
         with ui.tab_panel(tab_airlines):
@@ -297,7 +384,7 @@ with ui.column().classes('w-4/5 mx-auto'):
                             pagination={'page_size': 5}
                         ).classes('w-full mb-4')
 
-                        ui.button('Search').classes('w-full')
+                        ui.button('Search', on_click = load_airlines).classes('w-full')
 
         # ------- Flight Records -------
         with ui.tab_panel(tab_flights):
@@ -359,9 +446,7 @@ with ui.column().classes('w-4/5 mx-auto'):
                             pagination={'page_size': 5}
                         ).classes('w-full mb-4')
 
-                        ui.button('Search').classes('w-full')
-
-ui.run(title = 'Travel Agent Record Manager', reload = True)
+                        ui.button('Search', on_click = load_flights).classes('w-full')
 
 def startup() -> None:
     # Login
@@ -440,3 +525,5 @@ def startup() -> None:
             ui.label('Agent Dashboard').classes('text-3xl font-bold')
             ui.label('this is the protected agent view after login')
             ui.button('Logout', on_click=logout)
+
+ui.run(title = 'Travel Agent Record Manager', reload = True)
