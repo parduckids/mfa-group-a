@@ -209,6 +209,7 @@ def build_agent_view():
     def load_clients():
         """
         Search for a client by ID and display the result in the clients table.
+        When no id entered, show all clients.
 
         This function:
         - Retrieves and trims the client ID entered in the search input.
@@ -220,7 +221,12 @@ def build_agent_view():
             None
         """
         q = client_manage_search_id.value.strip()
-        matched = [c.copy() for c in clients if str(c.get('ID', '')).strip() == q]
+        # If search query is empty, get all clients, otherwise filter by the query
+        if not q:
+            matched = [c.copy() for c in clients]
+        else:
+            matched = [c.copy() for c in clients if str(c.get('ID', '')).strip() == q]
+
         for r in matched:
             r['ID'] = f"{int(r['ID']):09d}"
         table_clients.rows = matched
@@ -228,6 +234,7 @@ def build_agent_view():
     def load_airlines():
         """
         Search for an airline by ID and display the result in the airlines table.
+        When no id entered, show all airlines.
 
         This function:
         - Retrieves and trims the airline ID entered in the search input.
@@ -239,7 +246,12 @@ def build_agent_view():
             None
         """
         q = airline_manage_search_id.value.strip()
-        matched = [a.copy() for a in airlines if str(a.get('ID', '')).strip() == q]
+        # If search query is empty, get all airlines, otherwise filter by the query
+        if not q:
+            matched = [a.copy() for a in airlines]
+        else:
+            matched = [a.copy() for a in airlines if str(a.get('ID', '')).strip() == q]
+
         for r in matched:
             r['ID'] = f"{int(r['ID']):09d}"
         table_airlines.rows = matched
@@ -247,6 +259,7 @@ def build_agent_view():
     def load_flights():
         """
         Search for flights by client ID and display the results in the flights table.
+        When no id entered, show all flights.
 
         This function:
         - Retrieves and trims the client ID entered in the search input.
@@ -259,21 +272,23 @@ def build_agent_view():
             None
         """
         q = flight_manage_search_id.value.strip()
+        # If search query is empty, use all flights, otherwise filter by the query
+        source_flights = flights if not q else [f for f in flights if str(f.get('Client_ID', '')).strip() == q]
+
         matched = []
-        for f in flights:
-            if str(f.get('Client_ID', '')).strip() == q:
-                client = next((c for c in clients if c['ID'] == f['Client_ID']), {})
-                airline = next((a for a in airlines if a['ID'] == f['Airline_ID']), {})
-                record = {
-                    'Client ID': f.get('Client_ID', ''),
-                    'Client': client.get('Name', ''),
-                    'Airline ID': f.get('Airline_ID', ''),
-                    'Airline': airline.get('Company Name', ''),
-                    'Date': f.get('Date', ''),
-                    'Start City': f.get('Start City', ''),
-                    'End City': f.get('End City', '')
-                }
-                matched.append(record)
+        for f in source_flights:
+            client = next((c for c in clients if c['ID'] == f['Client_ID']), {})
+            airline = next((a for a in airlines if a['ID'] == f['Airline_ID']), {})
+            record = {
+                'Client ID': f.get('Client_ID', ''),
+                'Client': client.get('Name', ''),
+                'Airline ID': f.get('Airline_ID', ''),
+                'Airline': airline.get('Company Name', ''),
+                'Date': f.get('Date', ''),
+                'Start City': f.get('Start City', ''),
+                'End City': f.get('End City', '')
+            }
+            matched.append(record)
         table_flights.rows = matched
 
     edit_inputs = {}
@@ -445,6 +460,7 @@ def build_agent_view():
                                 columns=[{'name': f, 'label': f, 'field': f} for f in client_fields], rows=[],
                                 row_key='ID').classes('w-full mb-4')
                             ui.button('Search', on_click=load_clients).classes('w-full')
+                            load_clients()
                     with ui.tab_panel(tab_client_edit):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             client_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
@@ -468,6 +484,7 @@ def build_agent_view():
                                 columns=[{'name': n, 'label': n, 'field': n} for n in airline_fields], rows=[],
                                 row_key='ID').classes('w-full mb-4')
                             ui.button('Search', on_click=load_airlines).classes('w-full')
+                            load_airlines()
                     with ui.tab_panel(tab_airline_edit):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_edit_search_id = ui.input(label='Airline ID').classes('w-full mb-2')
@@ -502,6 +519,7 @@ def build_agent_view():
                             table_flights = ui.table(columns=flight_manage_columns, rows=[], row_key='Date').classes(
                                 'w-full mb-4')
                             ui.button('Search', on_click=load_flights).classes('w-full')
+                            load_flights()
                     with ui.tab_panel(tab_flight_edit):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             flight_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
