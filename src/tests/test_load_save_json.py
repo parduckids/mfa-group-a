@@ -21,12 +21,14 @@ def test_load_json_path(tmp_path):
     
     # Load the function and test the output
     result = load_json(path)
-    assert json.loads(path.read_text()) == data
+    assert result == data
     
-def test_save_json(tmp_path):
+def test_save_json(tmp_path, monkeypatch):
+    # Override the global variable 
+    monkeypatch.setattr('app.startup.data_dir', tmp_path)
+    
     # Create a temp file using pytest fixture
     path = tmp_path / "data.json"
-    data_dir = tmp_path
     
     # Create dummy data and dump into the temp file
     data = {'test_key': "test_value"}
