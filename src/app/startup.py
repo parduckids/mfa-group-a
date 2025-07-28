@@ -528,7 +528,6 @@ def build_agent_view():
                             flight_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
                             ui.button('Edit', on_click=edit_flights).classes('w-full')
 
-
 def startup() -> None:
     """Initializes the application, setting up the login screen and the protected agent dashboard."""
 
@@ -631,7 +630,7 @@ def startup() -> None:
     ui.label().bind_text_from(splitter, 'value').classes('splitter-value hidden')
 
 
-ui.run(title='Travel Agent Record Manager', reload=True)
+#ui.run(title='Travel Agent Record Manager', reload=True)
 
 
 # Render the full UI once the path is visited - used for testing
