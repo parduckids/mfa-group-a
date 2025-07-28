@@ -11,6 +11,7 @@ airline_file = data_dir / 'airlines.json'
 flight_file = data_dir / 'flights.json'
 
 
+
 # Helpers to load & save JSON
 def load_json(path, default=list):
     """
@@ -64,6 +65,11 @@ def build_agent_view():
         'Phone Number'
     ]
 
+    # Define which client fields are required for validation
+    required_client_fields = [
+        'Name', 'Address Line 1', 'City', 'Zip Code', 'Country', 'Phone Number'
+    ]
+
     # Define airline fields
     airline_fields = ['ID', 'Type', 'Company Name']
 
@@ -111,6 +117,7 @@ def build_agent_view():
         Create a new client record and save it to the client file.
 
         This function:
+        - Validates that all required fields are filled.
         - Generates a new unique client ID.
         - Collects input values into a record.
         - Sets the 'ID' and 'Type' fields.
@@ -122,6 +129,12 @@ def build_agent_view():
         Returns:
             None
         """
+        # Validate all required fields before proceeding
+        validation_ok = all(inputs[field].validate() for field in required_client_fields)
+        if not validation_ok:
+            ui.notify('Please fill in all required fields.', type='warning')
+            return
+
         new_id = get_next_client_id()
         record = {key: inp.value for key, inp in inputs.items()}
         record['ID'] = new_id
@@ -146,6 +159,7 @@ def build_agent_view():
         Create a new airline record and save it to the airline file.
 
         This function:
+        - Validates the company name field.
         - Generates a new unique airline ID.
         - Builds a record using the input company name.
         - Sets the 'ID', 'Type' and 'Company Name' fields.
@@ -157,6 +171,10 @@ def build_agent_view():
         Returns:
             None
         """
+        if not airline_input.validate():
+            ui.notify('Please fill in the company name.', type='warning')
+            return
+
         new_id = get_next_airline_id()
         record = {
             'ID': new_id,
@@ -181,6 +199,7 @@ def build_agent_view():
         Create a new flight record and save it to the flight file.
 
         This function:
+        - Validates that all flight detail fields are filled.
         - Collects flight details from user input fields.
         - Builds a flight record with client, airline, date, and cities.
         - Adds the 'Client_ID', 'Airline_ID', 'Date', 'Start City', 'End City' and 'Type' fields.
@@ -192,6 +211,11 @@ def build_agent_view():
         Returns:
             None
         """
+        flight_inputs = [client_select, airline_select, date_input, start_city_input, end_city_input]
+        if not all(inp.validate() for inp in flight_inputs):
+            ui.notify('Please fill in all flight details.', type='warning')
+            return
+
         record = {
             'Client_ID': client_select.value,
             'Airline_ID': airline_select.value,
@@ -206,8 +230,11 @@ def build_agent_view():
 
         ui.notify('Flight created')
 
-        for inp in [client_select, airline_select, date_input, start_city_input, end_city_input]:
+        for inp in flight_inputs:
             inp.value = ''
+
+        # Reset date to the new current time after clearing
+        date_input.value = datetime.now().strftime('%Y-%m-%dT%H:%M')
         load_flights()
 
     def load_clients():
@@ -604,7 +631,11 @@ def build_agent_view():
                             inputs = {}
                             for field in client_fields:
                                 if field not in ['ID', 'Type']:
-                                    inputs[field] = ui.input(label=field).classes('w-full mb-2')
+                                    inp = ui.input(label=field).classes('w-full mb-2')
+                                    if field in required_client_fields:
+                                        inp.validation = {
+                                            'This field is required': lambda value: bool(value and value.strip())}
+                                    inputs[field] = inp
                             ui.button('Create Client', on_click=create_client).classes('mt-2 w-full')
                     with ui.tab_panel(tab_client_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
@@ -635,6 +666,8 @@ def build_agent_view():
                     with ui.tab_panel(tab_airline_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_input = ui.input(label='Company Name').classes('w-full mb-2')
+                            airline_input.validation = {
+                                'This field is required': lambda value: bool(value and value.strip())}
                             ui.button('Create Airline', on_click=create_airline).classes('mt-2 w-full')
                     with ui.tab_panel(tab_airline_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
@@ -668,15 +701,27 @@ def build_agent_view():
                                 {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients},
                                 label='Client'
                             ).props('searchable true clearable').classes('w-full mb-2')
+                            client_select.validation = {'This field is required': bool}
 
                             airline_select = ui.select(
                                 {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines},
                                 label='Airline'
                             ).props('searchable true clearable').classes('w-full mb-2')
+                            airline_select.validation = {'This field is required': bool}
 
-                            date_input = ui.input(label='Date').props('type="datetime-local"').classes('w-full mb-2')
+                            default_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
+                            date_input = ui.input(label='Date', value=default_date).props(
+                                'type="datetime-local"').classes('w-full mb-2')
+                            date_input.validation = {'This field is required': bool}
+
                             start_city_input = ui.input(label='Start City').classes('w-full mb-2')
+                            start_city_input.validation = {
+                                'This field is required': lambda value: bool(value and value.strip())}
+
                             end_city_input = ui.input(label='End City').classes('w-full mb-2')
+                            end_city_input.validation = {
+                                'This field is required': lambda value: bool(value and value.strip())}
+
                             ui.button('Create Flight', on_click=create_flight).classes('mt-2 w-full')
                     with ui.tab_panel(tab_flight_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
