@@ -138,6 +138,7 @@ def build_agent_view():
 
         for inp in inputs.values():
             inp.value = ''
+        load_clients()
 
     def create_airline():
         """
@@ -172,6 +173,7 @@ def build_agent_view():
         ui.notify(f'Airline created with ID {new_id:09d}')
 
         airline_input.value = ''
+        load_airlines()
 
     def create_flight():
         """
@@ -205,6 +207,7 @@ def build_agent_view():
 
         for inp in [client_select, airline_select, date_input, start_city_input, end_city_input]:
             inp.value = ''
+        load_flights()
 
     def load_clients():
         """
@@ -591,37 +594,15 @@ def startup() -> None:
                     username_input = ui.input('Username').props('outlined')
                     password_input = ui.input('Password', password=True, password_toggle_button=True).props('outlined')
                     ui.button('Login', on_click=lambda: handle_login(username_input, password_input))
-                    # Create a hidden marker for the bound level (before) so it can be captured by the test  
+                    # Create a hidden marker for the bound level (before) so it can be captured by the test
                     ui.label().bind_text_from(splitter, 'value').classes('splitter-value-before hidden')
 
-                    
+
         with splitter.after:
             with ui.card().classes('w-full h-full').on('click', lambda: splitter.set_value(10)):
                 with ui.column().classes('w-full items-center gap-4'):
                     ui.label('Flight Search ✈️').classes('text-2xl font-bold')
                     ui.label('Welcome! Please provide the flight details.')
-                    ui.input('Client ID').props('outlined')
-                    ui.input('Flight Number').props('outlined')
-                    ui.button('Search')
-                    with ui.card().classes('w-full max-w-md mt-4 p-4 bg-gray-100'):
-                        ui.label('Example flight (this could be called: "Your flight to {end_city}") ').classes(
-                            'text-sm text-gray-500 mb-2')
-                        with ui.column().classes('gap-1'):
-                            ui.label('Client ID: 1234')
-                            ui.label('Airline ID: 567')
-                            ui.label('Flight ID: 8910')
-                            ui.label(f'Date: {datetime.now().strftime("%Y-%m-%d %H:%M")}')
-                            ui.label('Start City: London')
-                            ui.label('End City: New York')
-                    with ui.row().classes('m-3'):
-                        ui.label('OR')
-                    with ui.row().classes('mt-4'):
-                        with ui.card().classes(
-                                'bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-md shadow-sm'):
-                            ui.label('⚠️ No matching flights found. Please check the details and try again.').classes(
-                                'text-sm')
-                            # Create a hidden marker for the bound level (after) so it can be captured by the test         
-                            ui.label().bind_text_from(splitter, 'value').classes('splitter-value-after hidden')
 
                     client_id_input = ui.input('Client ID').props('outlined')
                     airline_id_input = ui.input('Airline ID').props('outlined')
@@ -644,9 +625,9 @@ def startup() -> None:
                 ui.button('Logout', on_click=logout)
 
             build_agent_view()
-
-    # Create a hidden marker for the bound level so it can be captured by the test 
+    # Create a hidden marker for the bound level so it can be captured by the test
     ui.label().bind_text_from(splitter, 'value').classes('splitter-value hidden')
+
 
 ui.run(title='Travel Agent Record Manager', reload=True)
 
