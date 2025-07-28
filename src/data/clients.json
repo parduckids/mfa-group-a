@@ -13,19 +13,6 @@
     "Type": "Client"
   },
   {
-    "Name": "Another Adam",
-    "Address Line 1": "23 Street street",
-    "Address Line 2": "",
-    "Address Line 3": "",
-    "City": "London",
-    "State": "London",
-    "Zip Code": "London",
-    "Country": "England",
-    "Phone Number": "0123456789",
-    "ID": 2,
-    "Type": "Client"
-  },
-  {
     "Name": "Not Adam",
     "Address Line 1": "24 Street street",
     "Address Line 2": "",
