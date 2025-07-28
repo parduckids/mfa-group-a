@@ -125,6 +125,7 @@ def build_agent_view():
         - Persists the data to the Client JSON file.
         - Notifies the user of success.
         - Clears the input fields.
+        - Switches to the 'View' tab.
 
         Returns:
             None
@@ -153,6 +154,9 @@ def build_agent_view():
         for inp in inputs.values():
             inp.value = ''
         load_clients()
+        # Switch to the view tab after creation
+        client_ops.set_value(tab_client_manage)
+
 
     def create_airline():
         """
@@ -167,6 +171,7 @@ def build_agent_view():
         - Persists the data to the Airline JSON file.
         - Notifies the user of success.
         - Clears the input field.
+        - Switches to the 'View' tab.
 
         Returns:
             None
@@ -193,6 +198,9 @@ def build_agent_view():
 
         airline_input.value = ''
         load_airlines()
+        # Switch to the view tab after creation
+        airline_ops.set_value(tab_airline_manage)
+
 
     def create_flight():
         """
@@ -207,6 +215,7 @@ def build_agent_view():
         - Saves the updated list to a JSON file.
         - Notifies the user of success.
         - Clears the input fields.
+        - Switches to the 'View' tab.
 
         Returns:
             None
@@ -236,6 +245,8 @@ def build_agent_view():
         # Reset date to the new current time after clearing
         date_input.value = datetime.now().strftime('%Y-%m-%dT%H:%M')
         load_flights()
+        # Switch to the view tab after creation
+        flight_ops.set_value(tab_flight_manage)
 
     def load_clients():
         """
