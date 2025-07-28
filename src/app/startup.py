@@ -595,7 +595,7 @@ def build_agent_view():
                     ui.label('Client Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as client_ops:
                     tab_client_create = ui.tab('Create')
-                    tab_client_manage = ui.tab('Manage')
+                    tab_client_manage = ui.tab('View')
                     tab_client_edit = ui.tab('Edit')
                     tab_client_delete = ui.tab('Delete')
                 with ui.tab_panels(client_ops).classes('w-full'):
@@ -628,7 +628,7 @@ def build_agent_view():
                     ui.label('Airline Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as airline_ops:
                     tab_airline_create = ui.tab('Create')
-                    tab_airline_manage = ui.tab('Manage')
+                    tab_airline_manage = ui.tab('View')
                     tab_airline_edit = ui.tab('Edit')
                     tab_airline_delete = ui.tab('Delete')
                 with ui.tab_panels(airline_ops).classes('w-full'):
@@ -658,7 +658,7 @@ def build_agent_view():
                     ui.label('Flight Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as flight_ops:
                     tab_flight_create = ui.tab('Create')
-                    tab_flight_manage = ui.tab('Manage')
+                    tab_flight_manage = ui.tab('View')
                     tab_flight_edit = ui.tab('Edit')
                     tab_flight_delete = ui.tab('Delete')
                 with ui.tab_panels(flight_ops).classes('w-full'):
