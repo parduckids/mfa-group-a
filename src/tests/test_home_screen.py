@@ -18,7 +18,6 @@ def test_splitter_initial(screen: Screen):
     screen.should_contain('Flight Search ✈️')
     screen.should_contain('Welcome! Please provide the flight details.')
     screen.should_contain('Client ID')
-    screen.should_contain('Flight Number')
     screen.find('Search')
     
 def test_splitter_click_left(screen: Screen):

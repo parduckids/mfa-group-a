@@ -616,6 +616,8 @@ def startup() -> None:
                         airlines,
                         flights
                     ))
+                    # Create a hidden marker for the bound level (after) so it can be captured by the test
+                    ui.label().bind_text_from(splitter, 'value').classes('splitter-value-after hidden')
 
     with ui.card().classes('w-full h-screen hidden p-0') as agent_dashboard:
         agent_dashboard.set_visibility(False)
