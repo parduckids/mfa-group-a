@@ -22,5 +22,13 @@
     "Start City": "Brisbane",
     "End City": "London",
     "Type": "Flight"
+  },
+  {
+    "Client_ID": 4,
+    "Airline_ID": 2,
+    "Date": "2025-07-29T00:50",
+    "Start City": "Budapest",
+    "End City": "Tenerife",
+    "Type": "Flight"
   }
 ]
