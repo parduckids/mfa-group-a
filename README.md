@@ -15,6 +15,7 @@
   - [Client Management](#client-management)
   - [Airline Management](#airline-management)
   - [Flight Management](#flight-management)
+- [Potential Future Features](#potential-future-features)
 - [Installation](#installation)
 - [Testing](TESTING.md)
 - [Usage](#usage)
@@ -28,7 +29,7 @@ For this project, we needed a way to create a web-based user interface without d
 
 * **Pure Python Development**: NiceGUI allows for the creation of web interfaces using only Python. This streamlined our development process, enabling us to focus on the application's logic rather than juggling multiple languages and frameworks.
 * **Ease of Use**: The library is known for its gentle learning curve. We were able to quickly build complex, interactive UI components, such as tabs, dialogs, and data tables, with minimal code.
-* **Component-Based Architecture**: It offers a rich set of pre-built UI elements (buttons, inputs, tables, etc.) that are both easy to implement and customize. This component-based approach made our code more modular, readable, and maintainable.
+* **Component-Based Architecture**: It offers a rich set of pre-built UI elements (buttons, inputs, tables, etc.) that are both easy to implement and customise. This component-based approach made our code more modular, readable, and maintainable.
 * **Built-in Web Server**: NiceGUI handles the web server and backend-frontend communication out of the box, abstracting away the complexities of web development and allowing us to concentrate on the application's features.
 * **Rapid Prototyping and Iteration**: The live reload feature was invaluable during development, allowing us to see changes instantly without manually restarting the server.
 
@@ -71,6 +72,34 @@ The "Flights" tab is the core of the booking system. It allows agents to:
 * **View/Search**: View all booked flights or filter them by a specific Client ID.
 * **Edit**: Modify the details of an existing flight booking.
 * **Delete**: Cancel a specific flight booking for a client.
+
+---
+
+## Potential Future Features
+While the current application meets all the project requirements, several features could be implemented to transition it into a production-ready system.
+
+- <strong>Robust Authentication and Authorization</strong>:
+    - Replace the hardcoded admin:admin credentials with a proper user database and password hashing (e.g., using passlib).
+    - Implement role-based access control (RBAC) to differentiate between agents and administrators.
+
+- <strong>Dedicated Client Portal</strong>:
+    - Develop a separate login system for clients. 
+    - Allow clients to view their booking history, check flight statuses, and manage their personal information without needing to contact an agent.
+
+- <strong>Database Integration</strong>:
+    - Migrate data storage from local JSON files to a relational database like PostgreSQL or a NoSQL database like MongoDB. This would improve data integrity, scalability, and performance.
+
+- <strong>Enhanced Agent Dashboard</strong>:
+    - Implement advanced search and filtering capabilities within the "View" tabs (e.g., search clients by name, filter flights by date range). 
+    - Add pagination to the data tables to handle a large number of records efficiently.
+
+- <strong>Third-Party API Integration</strong>:
+    - Connect to external airline APIs (Global Distribution Systems - GDS) to fetch real-time flight availability and pricing, rather than manually creating airline records.
+
+- <strong>Use of Containers </strong>:
+    - Create a Dockerfile to containerise the application, simplifying deployment and ensuring a consistent running environment across different machines.
+
+<strong> and more...</strong>
 
 ---
 
