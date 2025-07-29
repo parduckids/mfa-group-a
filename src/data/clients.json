@@ -13,19 +13,6 @@
     "Type": "Client"
   },
   {
-    "Name": "Another Adam",
-    "Address Line 1": "23 Street street",
-    "Address Line 2": "",
-    "Address Line 3": "",
-    "City": "London",
-    "State": "London",
-    "Zip Code": "London",
-    "Country": "England",
-    "Phone Number": "0123456789",
-    "ID": 2,
-    "Type": "Client"
-  },
-  {
     "Name": "Not Adam",
     "Address Line 1": "24 Street street",
     "Address Line 2": "",
@@ -36,6 +23,19 @@
     "Country": "England",
     "Phone Number": "07123454321",
     "ID": 3,
+    "Type": "Client"
+  },
+  {
+    "Name": "Definitely Not Adam",
+    "Address Line 1": "25 Street street",
+    "Address Line 2": "",
+    "Address Line 3": "",
+    "City": "London",
+    "State": "",
+    "Zip Code": "N117BG",
+    "Country": "England",
+    "Phone Number": "07123456789",
+    "ID": 4,
     "Type": "Client"
   }
 ]

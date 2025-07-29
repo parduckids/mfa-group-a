@@ -11,6 +11,7 @@ airline_file = data_dir / 'airlines.json'
 flight_file = data_dir / 'flights.json'
 
 
+
 # Helpers to load & save JSON
 def load_json(path, default=list):
     """
@@ -64,6 +65,11 @@ def build_agent_view():
         'Phone Number'
     ]
 
+    # Define which client fields are required for validation
+    required_client_fields = [
+        'Name', 'Address Line 1', 'City', 'Zip Code', 'Country', 'Phone Number'
+    ]
+
     # Define airline fields
     airline_fields = ['ID', 'Type', 'Company Name']
 
@@ -111,6 +117,7 @@ def build_agent_view():
         Create a new client record and save it to the client file.
 
         This function:
+        - Validates that all required fields are filled.
         - Generates a new unique client ID.
         - Collects input values into a record.
         - Sets the 'ID' and 'Type' fields.
@@ -118,10 +125,17 @@ def build_agent_view():
         - Persists the data to the Client JSON file.
         - Notifies the user of success.
         - Clears the input fields.
+        - Switches to the 'View' tab.
 
         Returns:
             None
         """
+        # Validate all required fields before proceeding
+        validation_ok = all(inputs[field].validate() for field in required_client_fields)
+        if not validation_ok:
+            ui.notify('Please fill in all required fields.', type='warning')
+            return
+
         new_id = get_next_client_id()
         record = {key: inp.value for key, inp in inputs.items()}
         record['ID'] = new_id
@@ -133,18 +147,23 @@ def build_agent_view():
         # Update the client dropdown's options.
         new_client_options = {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients}
         client_select.set_options(new_client_options)
+        flight_delete_client_select.set_options(new_client_options)
 
         ui.notify(f'Client created with ID {new_id:09d}')
 
         for inp in inputs.values():
             inp.value = ''
         load_clients()
+        # Switch to the view tab after creation
+        client_ops.set_value(tab_client_manage)
+
 
     def create_airline():
         """
         Create a new airline record and save it to the airline file.
 
         This function:
+        - Validates the company name field.
         - Generates a new unique airline ID.
         - Builds a record using the input company name.
         - Sets the 'ID', 'Type' and 'Company Name' fields.
@@ -152,10 +171,15 @@ def build_agent_view():
         - Persists the data to the Airline JSON file.
         - Notifies the user of success.
         - Clears the input field.
+        - Switches to the 'View' tab.
 
         Returns:
             None
         """
+        if not airline_input.validate():
+            ui.notify('Please fill in the company name.', type='warning')
+            return
+
         new_id = get_next_airline_id()
         record = {
             'ID': new_id,
@@ -174,12 +198,16 @@ def build_agent_view():
 
         airline_input.value = ''
         load_airlines()
+        # Switch to the view tab after creation
+        airline_ops.set_value(tab_airline_manage)
+
 
     def create_flight():
         """
         Create a new flight record and save it to the flight file.
 
         This function:
+        - Validates that all flight detail fields are filled.
         - Collects flight details from user input fields.
         - Builds a flight record with client, airline, date, and cities.
         - Adds the 'Client_ID', 'Airline_ID', 'Date', 'Start City', 'End City' and 'Type' fields.
@@ -187,10 +215,16 @@ def build_agent_view():
         - Saves the updated list to a JSON file.
         - Notifies the user of success.
         - Clears the input fields.
+        - Switches to the 'View' tab.
 
         Returns:
             None
         """
+        flight_inputs = [client_select, airline_select, date_input, start_city_input, end_city_input]
+        if not all(inp.validate() for inp in flight_inputs):
+            ui.notify('Please fill in all flight details.', type='warning')
+            return
+
         record = {
             'Client_ID': client_select.value,
             'Airline_ID': airline_select.value,
@@ -205,9 +239,14 @@ def build_agent_view():
 
         ui.notify('Flight created')
 
-        for inp in [client_select, airline_select, date_input, start_city_input, end_city_input]:
+        for inp in flight_inputs:
             inp.value = ''
+
+        # Reset date to the new current time after clearing
+        date_input.value = datetime.now().strftime('%Y-%m-%dT%H:%M')
         load_flights()
+        # Switch to the view tab after creation
+        flight_ops.set_value(tab_flight_manage)
 
     def load_clients():
         """
@@ -341,8 +380,9 @@ def build_agent_view():
                 ui.notify('Client updated successfully', type='positive')
                 dialog.close()
 
-            ui.button('Save Changes', on_click=save_changes).classes('mt-2 w-full')
-            ui.button('Cancel', on_click=dialog.close).classes('mt-2 w-full')
+            with ui.row().classes('w-full justify-end'):
+                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Save Changes', on_click=save_changes)
         dialog.open()
 
     def edit_airlines():
@@ -387,8 +427,9 @@ def build_agent_view():
                 ui.notify('Airline updated successfully', type='positive')
                 dialog.close()
 
-            ui.button('Save Changes', on_click=save_airline).classes('mt-2 w-full')
-            ui.button('Cancel', on_click=dialog.close).classes('mt-2 w-full')
+            with ui.row().classes('w-full justify-end'):
+                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Save Changes', on_click=save_airline)
         dialog.open()
 
     def edit_flights():
@@ -431,9 +472,155 @@ def build_agent_view():
                 ui.notify('Flight updated successfully', type='positive')
                 dialog.close()
 
-            ui.button('Save Changes', on_click=save_flight).classes('mt-2 w-full')
-            ui.button('Cancel', on_click=dialog.close).classes('mt-2 w-full')
+            with ui.row().classes('w-full justify-end'):
+                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Save Changes', on_click=save_flight)
         dialog.open()
+
+    def delete_client():
+        """
+        Delete a client and all associated flights after confirmation.
+
+        Finds a client by ID. If found, it presents a confirmation dialog.
+        Upon confirmation, it removes the client from the `clients` list and
+        also removes all flights associated with that client from the `flights` list.
+        It then saves both updated lists to their respective JSON files and refreshes the UI.
+        """
+        q = client_delete_search_id.value.strip()
+        client_to_delete = next((c for c in clients if str(c.get('ID', '')).strip() == q), None)
+
+        if not client_to_delete:
+            ui.notify('Client not found', type='warning')
+            return
+
+        async def perform_delete():
+            global clients, flights
+            client_id_to_delete = client_to_delete['ID']
+            clients = [c for c in clients if c['ID'] != client_id_to_delete]
+            flights = [f for f in flights if f.get('Client_ID') != client_id_to_delete]
+
+            save_json(client_file, clients)
+            save_json(flight_file, flights)
+
+            load_clients()
+            load_flights()
+
+            # Update the client dropdown's options.
+            new_client_options = {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients}
+            client_select.set_options(new_client_options)
+            flight_delete_client_select.set_options(new_client_options)
+
+            ui.notify(f'Client {q} and all associated flights have been deleted.', type='positive')
+            dialog.close()
+            client_delete_search_id.value = ''
+
+        with ui.dialog() as dialog, ui.card():
+            ui.label(f"Are you sure you want to delete client {q} and all their flights?")
+            with ui.row().classes('w-full justify-end'):
+                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Yes, delete', on_click=perform_delete, color='red')
+        dialog.open()
+
+    def delete_airline():
+        """
+        Delete an airline and all associated flights after confirmation.
+
+        Finds an airline by ID. If found, it shows a confirmation dialog.
+        Upon confirmation, it removes the airline from the `airlines` list and
+        also removes all flights associated with that airline from the `flights` list.
+        Finally, it saves the updated lists and refreshes the UI.
+        """
+        q = airline_delete_search_id.value.strip()
+        airline_to_delete = next((a for a in airlines if str(a.get('ID', '')).strip() == q), None)
+
+        if not airline_to_delete:
+            ui.notify('Airline not found', type='warning')
+            return
+
+        async def perform_delete():
+            global airlines, flights
+            airline_id_to_delete = airline_to_delete['ID']
+            airlines = [a for a in airlines if a['ID'] != airline_id_to_delete]
+            flights = [f for f in flights if f.get('Airline_ID') != airline_id_to_delete]
+
+            save_json(airline_file, airlines)
+            save_json(flight_file, flights)
+
+            load_airlines()
+            load_flights()
+
+            # Update the airline dropdown's options.
+            new_airline_options = {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines}
+            airline_select.set_options(new_airline_options)
+
+            ui.notify(f'Airline {q} and all associated flights have been deleted.', type='positive')
+            dialog.close()
+            airline_delete_search_id.value = ''
+
+        with ui.dialog() as dialog, ui.card():
+            ui.label(f"Are you sure you want to delete airline {q} and all associated flights?")
+            with ui.row().classes('w-full justify-end'):
+                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Yes, delete', on_click=perform_delete, color='red')
+        dialog.open()
+
+    def confirm_delete_single_flight(flight_to_delete):
+        """
+        Display a confirmation dialog for deleting a single flight.
+
+        Args:
+            flight_to_delete (dict): The flight object to be deleted.
+        """
+
+        async def perform_delete():
+            flights.remove(flight_to_delete)
+            save_json(flight_file, flights)
+            ui.notify('Flight deleted successfully.')
+            # Refresh the main table and the dynamic list in the delete tab
+            load_flights()
+            update_deletable_flights_list(flight_to_delete['Client_ID'])
+            dialog.close()
+
+        with ui.dialog() as dialog, ui.card():
+            airline = next((a for a in airlines if a['ID'] == flight_to_delete['Airline_ID']), {})
+            ui.label(f"Are you sure you want to delete this flight?")
+            ui.label(f"To: {flight_to_delete['End City']} on {flight_to_delete['Date']}")
+            ui.label(f"Airline: {airline.get('Company Name', 'N/A')}")
+            with ui.row().classes('w-full justify-end'):
+                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Yes, delete', on_click=perform_delete, color='red')
+        dialog.open()
+
+    def update_deletable_flights_list(client_id):
+        """
+        Clear and repopulate the list of flights available for deletion for a given client.
+
+        Args:
+            client_id (int): The ID of the client whose flights should be listed.
+        """
+        deletable_flights_container.clear()
+        if not client_id:
+            return
+
+        client_flights = [f for f in flights if f.get('Client_ID') == client_id]
+
+        with deletable_flights_container:
+            if not client_flights:
+                ui.label('No flights found for this client.')
+                return
+
+            ui.label(f'Flights for Client {client_id}:').classes('text-md font-bold mt-4')
+            with ui.list().props('bordered separator'):
+                for f in client_flights:
+                    airline = next((a for a in airlines if a['ID'] == f['Airline_ID']), {})
+                    with ui.item():
+                        with ui.item_section():
+                            ui.item_label(f"To: {f.get('End City', 'N/A')} on {f.get('Date', 'N/A')}")
+                            ui.item_label(f"Airline: {airline.get('Company Name', 'N/A')}").props('caption')
+                        with ui.item_section().props('side'):
+                            # The f=f in lambda captures the current flight for the on_click event
+                            ui.button(icon='delete', on_click=lambda f=f: confirm_delete_single_flight(f),
+                                      color='red').props('flat dense')
 
     with ui.column().classes('w-full'):
         with ui.tabs().classes('w-full') as main_tabs:
@@ -446,15 +633,20 @@ def build_agent_view():
                     ui.label('Client Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as client_ops:
                     tab_client_create = ui.tab('Create')
-                    tab_client_manage = ui.tab('Manage')
+                    tab_client_manage = ui.tab('View')
                     tab_client_edit = ui.tab('Edit')
+                    tab_client_delete = ui.tab('Delete')
                 with ui.tab_panels(client_ops).classes('w-full'):
                     with ui.tab_panel(tab_client_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             inputs = {}
                             for field in client_fields:
                                 if field not in ['ID', 'Type']:
-                                    inputs[field] = ui.input(label=field).classes('w-full mb-2')
+                                    inp = ui.input(label=field).classes('w-full mb-2')
+                                    if field in required_client_fields:
+                                        inp.validation = {
+                                            'This field is required': lambda value: bool(value and value.strip())}
+                                    inputs[field] = inp
                             ui.button('Create Client', on_click=create_client).classes('mt-2 w-full')
                     with ui.tab_panel(tab_client_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
@@ -468,17 +660,25 @@ def build_agent_view():
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             client_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
                             ui.button('Edit', on_click=edit_clients).classes('w-full')
+                    with ui.tab_panel(tab_client_delete):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            client_delete_search_id = ui.input(label='Client ID').classes('w-full mb-2')
+                            ui.button('Delete Client', on_click=delete_client, color='red').classes('w-full')
+
             with ui.tab_panel(tab_airlines):
                 with ui.row().classes('w-full justify-center mb-4'):
                     ui.label('Airline Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as airline_ops:
                     tab_airline_create = ui.tab('Create')
-                    tab_airline_manage = ui.tab('Manage')
+                    tab_airline_manage = ui.tab('View')
                     tab_airline_edit = ui.tab('Edit')
+                    tab_airline_delete = ui.tab('Delete')
                 with ui.tab_panels(airline_ops).classes('w-full'):
                     with ui.tab_panel(tab_airline_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_input = ui.input(label='Company Name').classes('w-full mb-2')
+                            airline_input.validation = {
+                                'This field is required': lambda value: bool(value and value.strip())}
                             ui.button('Create Airline', on_click=create_airline).classes('mt-2 w-full')
                     with ui.tab_panel(tab_airline_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
@@ -492,13 +692,19 @@ def build_agent_view():
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_edit_search_id = ui.input(label='Airline ID').classes('w-full mb-2')
                             ui.button('Edit', on_click=edit_airlines).classes('w-full')
+                    with ui.tab_panel(tab_airline_delete):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            airline_delete_search_id = ui.input(label='Airline ID').classes('w-full mb-2')
+                            ui.button('Delete Airline', on_click=delete_airline, color='red').classes('w-full')
+
             with ui.tab_panel(tab_flights):
                 with ui.row().classes('w-full justify-center mb-4'):
                     ui.label('Flight Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as flight_ops:
                     tab_flight_create = ui.tab('Create')
-                    tab_flight_manage = ui.tab('Manage')
+                    tab_flight_manage = ui.tab('View')
                     tab_flight_edit = ui.tab('Edit')
+                    tab_flight_delete = ui.tab('Delete')
                 with ui.tab_panels(flight_ops).classes('w-full'):
                     with ui.tab_panel(tab_flight_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
@@ -506,15 +712,27 @@ def build_agent_view():
                                 {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients},
                                 label='Client'
                             ).props('searchable true clearable').classes('w-full mb-2')
+                            client_select.validation = {'This field is required': bool}
 
                             airline_select = ui.select(
                                 {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines},
                                 label='Airline'
                             ).props('searchable true clearable').classes('w-full mb-2')
+                            airline_select.validation = {'This field is required': bool}
 
-                            date_input = ui.input(label='Date').props('type="datetime-local"').classes('w-full mb-2')
+                            default_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
+                            date_input = ui.input(label='Date', value=default_date).props(
+                                'type="datetime-local"').classes('w-full mb-2')
+                            date_input.validation = {'This field is required': bool}
+
                             start_city_input = ui.input(label='Start City').classes('w-full mb-2')
+                            start_city_input.validation = {
+                                'This field is required': lambda value: bool(value and value.strip())}
+
                             end_city_input = ui.input(label='End City').classes('w-full mb-2')
+                            end_city_input.validation = {
+                                'This field is required': lambda value: bool(value and value.strip())}
+
                             ui.button('Create Flight', on_click=create_flight).classes('mt-2 w-full')
                     with ui.tab_panel(tab_flight_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
@@ -527,6 +745,14 @@ def build_agent_view():
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             flight_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
                             ui.button('Edit', on_click=edit_flights).classes('w-full')
+                    with ui.tab_panel(tab_flight_delete):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            flight_delete_client_select = ui.select(
+                                {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients},
+                                label='Select Client to see their flights',
+                                on_change=lambda e: update_deletable_flights_list(e.value)
+                            ).props('searchable true clearable').classes('w-full mb-2')
+                            deletable_flights_container = ui.column().classes('w-full')
 
 
 def startup() -> None:
@@ -596,7 +822,6 @@ def startup() -> None:
                     ui.button('Login', on_click=lambda: handle_login(username_input, password_input))
                     # Create a hidden marker for the bound level (before) so it can be captured by the test
                     ui.label().bind_text_from(splitter, 'value').classes('splitter-value-before hidden')
-
 
         with splitter.after:
             with ui.card().classes('w-full h-full').on('click', lambda: splitter.set_value(10)):

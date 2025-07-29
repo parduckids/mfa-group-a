@@ -18,9 +18,17 @@
   {
     "Client_ID": 1,
     "Airline_ID": 1,
-    "Date": "",
-    "Start City": "Sydney",
-    "End City": "Warsaw",
+    "Date": "2025-07-29T00:18",
+    "Start City": "Brisbane",
+    "End City": "London",
+    "Type": "Flight"
+  },
+  {
+    "Client_ID": 4,
+    "Airline_ID": 2,
+    "Date": "2025-07-29T00:50",
+    "Start City": "Budapest",
+    "End City": "Tenerife",
     "Type": "Flight"
   }
 ]
