@@ -6,7 +6,7 @@ pytest_plugins = ['nicegui.testing.plugin']
 
 @pytest.fixture
 def user(user: User) -> User:
-    startup()
+    #startup()
     return user
 
 @pytest.fixture
