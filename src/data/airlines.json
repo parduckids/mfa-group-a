@@ -8,10 +8,5 @@
     "ID": 2,
     "Type": "Airline",
     "Company Name": "May Bee"
-  },
-  {
-    "ID": 3,
-    "Type": "Airline",
-    "Company Name": "test airline name"
   }
 ]
