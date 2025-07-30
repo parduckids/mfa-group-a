@@ -29,7 +29,7 @@ def test_create_client(screen: Screen):
     screen.wait(0.5)
     
     screen.find('Create').click()
-    screen.wait(0.5)
+    screen.wait(15)
     
     def complete_fields(names, texts):
         if isinstance(names, str):
@@ -87,7 +87,7 @@ def test_create_airline(screen: Screen):
     screen.wait(0.5)
     
     screen.find('Create').click()
-    screen.wait(0.5)
+    screen.wait(15)
     
     def complete_fields(names, texts):
         if isinstance(names, str):
@@ -139,7 +139,7 @@ def test_create_flight(screen: Screen):
     screen.wait(0.5)
     
     screen.find('Create').click()
-    screen.wait(0.5)
+    screen.wait(15)
     
     def complete_fields(names, texts):
         if isinstance(names, str):

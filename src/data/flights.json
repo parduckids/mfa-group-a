@@ -30,5 +30,13 @@
     "Start City": "Budapest",
     "End City": "Tenerife",
     "Type": "Flight"
+  },
+  {
+    "Client_ID": 1,
+    "Airline_ID": 1,
+    "Date": "2025-07-30T12:11",
+    "Start City": "test start",
+    "End City": "test end",
+    "Type": "Flight"
   }
 ]
