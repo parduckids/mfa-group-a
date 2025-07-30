@@ -3,6 +3,9 @@ from nicegui.testing import Screen
 from app import startup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+import platform
+
+mod = Keys.COMMAND if platform.system() == 'Darwin' else Keys.CONTROL
 
 pytest_plugins = ['nicegui.testing.plugin']
 
@@ -133,7 +136,7 @@ def test_view_client_search(screen: Screen):
     screen.should_contain('No data available')
     
     inputs[-1].click()
-    inputs[-1].send_keys(Keys.CONTROL + 'a')
+    inputs[-1].send_keys(mod + 'a')
     inputs[-1].send_keys(Keys.DELETE)
     screen.wait(0.5)
     inputs[-1].send_keys('1')
@@ -175,7 +178,7 @@ def test_view_airline_search(screen: Screen):
     screen.should_contain('No data available')
     
     inputs[-1].click()
-    inputs[-1].send_keys(Keys.CONTROL + 'a')
+    inputs[-1].send_keys(mod + 'a')
     inputs[-1].send_keys(Keys.DELETE)
     screen.wait(0.5)
     inputs[-1].send_keys('1')
@@ -217,7 +220,7 @@ def test_view_flight_search(screen: Screen):
     screen.should_contain('No data available')
     
     inputs[-1].click()
-    inputs[-1].send_keys(Keys.CONTROL + 'a')
+    inputs[-1].send_keys(mod + 'a')
     inputs[-1].send_keys(Keys.DELETE)
     screen.wait(0.5)
     inputs[-1].send_keys('1')
