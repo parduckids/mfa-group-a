@@ -75,6 +75,7 @@ def build_agent_view():
 
     # Define flight fields
     flight_manage_columns = [
+        {'name': 'Booking ID', 'label': 'Booking ID', 'field': 'Booking ID'},
         {'name': 'Flight ID', 'label': 'Flight ID', 'field': 'Flight ID'},
         {'name': 'Client ID', 'label': 'Client ID', 'field': 'Client ID'},
         #{'name': 'Client', 'label': 'Client Name', 'field': 'Client'},
@@ -86,7 +87,7 @@ def build_agent_view():
     ]
 
     available_flight_fields = [
-        'flight_ID','Airline_ID', 'Date', 'Start City', 'End City'
+        'Flight_ID','Airline_ID', 'Date', 'Start City', 'End City'
     ]
 
     def get_next_client_id():
@@ -128,10 +129,10 @@ def build_agent_view():
             int: The next available flight ID.
         """
         if available_flights:
-            return max(int(f.get('flight_ID', 0)) for f in available_flights) + 1
+            return max(int(f.get('Flight_ID', 0)) for f in available_flights) + 1
         return 1
 
-    def get_next_booking_ID():
+    def get_next_booking_id():
         """
         Generate the next available Booking ID.
 
@@ -142,7 +143,7 @@ def build_agent_view():
             int: The next available flight ID.
         """
         if flights:
-            return max(int(f.get('booking_id', 0)) for f in flights) + 1
+            return max(int(f.get('Booking_ID', 0)) for f in flights) + 1
         return 1
 
 
@@ -268,13 +269,13 @@ def build_agent_view():
             ui.notify('Please choose a client ID.', type='warning')
             return
 
-        new_booking_id = get_next_booking_ID
+        new_Booking_ID = get_next_booking_id
 
         record = {
-            'booking_id': new_booking_id(),
+            'Booking_ID': new_Booking_ID(),
             'Client_ID': client_select.value,
             'Airline_ID': flight_form_inputs['airline_select'].value,
-            'flight_ID': flight_select.value,
+            'Flight_ID': flight_select.value,
             'Date': flight_form_inputs['date_input'].value,
             'Start City': flight_form_inputs['start_city'].value,
             'End City': flight_form_inputs['end_city'].value,
@@ -302,9 +303,9 @@ def build_agent_view():
 
         This function:
         - Validates that all required flight fields are filled.
-        - Generates a unique flight_ID using get_next_available_flight_id().
+        - Generates a unique Flight_ID using get_next_available_Booking_ID().
         - Collects available flight details from user input fields.
-        - Builds a available flight record with flight_ID, Airline_ID, Date, Start City, and End City.
+        - Builds a available flight record with Flight_ID, Airline_ID, Date, Start City, and End City.
         - Appends the record to the available_flights list.
         - Saves the updated list to a JSON file.
         - Notifies the user of success.
@@ -319,11 +320,11 @@ def build_agent_view():
             ui.notify('Please fill in all flight details.', type='warning')
             return
 
-        # Generate a unique flight_ID using helper function
+        # Generate a unique Flight_ID using helper function
         new_id = get_next_available_flight_id()
 
         record = {
-            'flight_ID': new_id,
+            'Flight_ID': new_id,
             'Airline_ID': airline_select.value,
             'Date': date_input.value,
             'Start City': start_city_input.value,
@@ -409,16 +410,19 @@ def build_agent_view():
         Returns:
             None
         """
-        q = flight_manage_search_id.value.strip()
+        q = flight_booking_manage_search_id.value.strip()
+        print(q)
         # If search query is empty, use all flights, otherwise filter by the query
         source_flights = flights if not q else [f for f in flights if str(f.get('Client_ID', '')).strip() == q]
+        print(source_flights)
 
         matched = []
         for f in source_flights:
             client = next((c for c in clients if c['ID'] == f['Client_ID']), {})
             airline = next((a for a in airlines if a['ID'] == f['Airline_ID']), {})
             record = {
-                'Flight ID': f.get('flight_ID', ""),
+                'Booking ID': f.get('Booking_ID', ""),
+                'Flight ID': f.get('Flight_ID', ""),
                 'Client ID': f.get('Client_ID', ''),
                 #'Client': client.get('Name', ''), #TODO: Add Client Name back in
                 'Airline ID': f.get('Airline_ID', ''),
@@ -427,8 +431,11 @@ def build_agent_view():
                 'Start City': f.get('Start City', ''),
                 'End City': f.get('End City', '')
             }
+            print(record)
             matched.append(record)
+        print(matched)
         table_flights.rows = matched
+
 
     def load_available_flights():
         """
@@ -445,12 +452,12 @@ def build_agent_view():
         Returns:
             None
         """
-        available_flight_fields = ['flight_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
+        available_flight_fields = ['Flight_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
         q = flight_manage_search_id.value.strip()
 
-        # If search query is empty, use all available flights, otherwise filter by flight_ID
+        # If search query is empty, use all available flights, otherwise filter by Flight_ID
         source_flights = available_flights if not q else [
-            f for f in available_flights if str(f.get('flight_ID', '')).strip() == q
+            f for f in available_flights if str(f.get('Flight_ID', '')).strip() == q
         ]
 
         matched = []
@@ -570,7 +577,7 @@ def build_agent_view():
         """
         Open a dialog to edit an existing flight's information.
 
-        This function searches for a flight using the `Client_ID` entered in the
+        This function searches for a flight using the `Booking ID` entered in the
         search input field. If a matching flight is found, a dialog
         is displayed containing input fields pre-filled with the flight's current data.
         The user may edit the fields and choose to save the changes or cancel the operation.
@@ -578,14 +585,14 @@ def build_agent_view():
         If the flight is not found, a warning notification is displayed.
         """
         q = flight_edit_search_id.value.strip()
-        flight = next((f for f in flights if str(f.get('Client_ID', '')).strip() == q), None)
+        flight = next((f for f in flights if str(f.get('Booking_ID', '')).strip() == q), None)
         if not flight:
             ui.notify('Flight not found', type='warning')
             return
         edit_flight_inputs.clear()
         with ui.dialog() as dialog, ui.card():
             ui.label(f"Edit Flight for Client ID: {flight.get('Client_ID')}").classes("text-lg font-bold mb-2")
-            flight_fields = ['Client_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
+            flight_fields = ['Client_ID', 'Airline_ID', 'Booking_ID', 'Date', 'Start City', 'End City']
             for field in flight_fields:
                 value = flight.get(field, '')
                 edit_flight_inputs[field] = ui.input(label=field, value=value).classes('mb-2 w-full')
@@ -617,24 +624,24 @@ def build_agent_view():
         """
         Open a dialog to edit an existing available flight's information.
 
-        This function searches for a flight using the `flight_ID` entered in the
+        This function searches for a flight using the `Flight_ID` entered in the
         search input field. If a matching flight is found, a dialog
         is displayed containing input fields pre-filled with the flight's current data.
         The user may edit the fields and choose to save the changes or cancel the operation.
 
         If the flight is not found, a warning notification is displayed.
         """
-        available_flight_fields = ['flight_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
+        available_flight_fields = ['Flight_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
         q = flight_edit_search_id.value.strip()
 
-        flight = next((f for f in available_flights if str(f.get('flight_ID', '')).strip() == q), None)
+        flight = next((f for f in available_flights if str(f.get('Flight_ID', '')).strip() == q), None)
         if not flight:
             ui.notify('Flight not found', type='warning')
             return
 
         edit_flight_inputs.clear()
         with ui.dialog() as dialog, ui.card():
-            ui.label(f"Edit Flight ID: {flight.get('flight_ID')}").classes("text-lg font-bold mb-2")
+            ui.label(f"Edit Flight ID: {flight.get('Flight_ID')}").classes("text-lg font-bold mb-2")
 
             for field in available_flight_fields:
                 value = flight.get(field, '')
@@ -992,7 +999,7 @@ def build_agent_view():
                                 print(f"Selected ID: {selected_id} (type: {type(selected_id)})")
 
                                 selected_flight = next(
-                                    (f for f in available_flights if str(f['flight_ID']) == selected_id), None
+                                    (f for f in available_flights if str(f['Flight_ID']) == selected_id), None
                                 )
 
                                 if selected_flight:
@@ -1003,7 +1010,7 @@ def build_agent_view():
 
                             # Initial UI elements
                             flight_select = ui.select(
-                                {f['flight_ID']: f"{f['flight_ID']:09d}" for f in available_flights},
+                                {f['Flight_ID']: f"{f['Flight_ID']:09d}" for f in available_flights},
                                 label='Select Flight', on_change=populate_flight_fields
                             ).props('clearable').classes('w-full mb-2')
                             flight_select.validation = {'This field is required': bool}
@@ -1014,19 +1021,25 @@ def build_agent_view():
                             ).props('searchable true clearable').classes('w-full mb-2')
                             client_select.validation = {'This field is required': bool}
 
-                            ui.button('Create Flight', on_click=create_flight).classes('mt-2 w-full')
+                            ui.button('Create Booking', on_click=create_flight).classes(
+                                'mt-2 w-full w-full border border-black text-black bg-white'
+                            )
 
                     with ui.tab_panel(tab_flight_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
-                            flight_manage_search_id = ui.input(label='Client ID').classes('w-full mb-2')
-                            table_flights = ui.table(columns=flight_manage_columns, rows=[], row_key='Date').classes(
+                            flight_booking_manage_search_id = ui.input(label='Client ID').classes('w-full mb-2')
+                            table_flights = ui.table(columns=flight_manage_columns, rows=[], row_key='Client ID').classes(
                                 'w-full mb-4')
-                            ui.button('Search', on_click=load_flights).classes('w-full')
+                            ui.button('Search', on_click=load_flights).classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                             load_flights()
                     with ui.tab_panel(tab_flight_edit):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
-                            flight_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
-                            ui.button('Edit', on_click=edit_flights).classes('w-full')
+                            flight_edit_search_id = ui.input(label='Booking ID').classes('w-full mb-2')
+                            ui.button('Edit', on_click=edit_flights).classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                     with ui.tab_panel(tab_flight_delete):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             flight_delete_client_select = ui.select(

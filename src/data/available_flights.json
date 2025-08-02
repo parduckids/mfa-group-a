@@ -1,6 +1,6 @@
 [
   {
-    "flight_ID": 1,
+    "Flight_ID": 1,
     "Airline_ID": 1,
     "Date": "12/07/2026",
     "Start City": "London",
@@ -8,7 +8,7 @@
     "Type": "Flight"
   },
   {
-    "flight_ID": 2,
+    "Flight_ID": 2,
     "Airline_ID": 1,
     "Date": "2025-07-29T00:37",
     "Start City": "Paris",
@@ -16,7 +16,7 @@
     "Type": "Flight"
   },
   {
-    "flight_ID": 3,
+    "Flight_ID": 3,
     "Airline_ID": 1,
     "Date": "2025-07-29T00:18",
     "Start City": "Brisbane",
@@ -24,7 +24,7 @@
     "Type": "Flight"
   },
   {
-    "flight_ID": 5,
+    "Flight_ID": 5,
     "Airline_ID": 2,
     "Date": "2025-07-29T00:50",
     "Start City": "Budapest",
@@ -32,7 +32,7 @@
     "Type": "Flight"
   },
   {
-    "flight_ID": 6,
+    "Flight_ID": 6,
     "Airline_ID": 1,
     "Date": "2025-07-30T12:39",
     "Start City": "test start",
@@ -40,7 +40,7 @@
     "Type": "Flight"
   },
   {
-    "flight_ID": 7,
+    "Flight_ID": 7,
     "Airline_ID": 1,
     "Date": "2026-12-09T12:30",
     "Start City": "London",
