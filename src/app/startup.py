@@ -601,8 +601,20 @@ def build_agent_view():
                 refreshes the UI flight table, displays a success notification, and closes
                 the dialog.
                 """
+
                 for field in flight_fields:
-                    flight[field] = edit_flight_inputs[field].value
+                    value = edit_flight_inputs[field].value
+                    if 'ID' in field:
+                        try:
+                            flight[field] = int(value)
+                        except ValueError:
+                            ui.notify(f'{field} must be a number', type='warning')
+                            return
+                    else:
+                        flight[field] = value
+
+                #for field in flight_fields:
+                #    flight[field] = edit_flight_inputs[field].value
                 save_json(flight_file, flights)
                 load_flights()
                 ui.notify('Flight updated successfully', type='positive')
@@ -653,11 +665,19 @@ def build_agent_view():
                 the dialog.
                 """
                 for field in available_flight_fields:
-                    flight[field] = edit_available_flights_inputs[field].value
+                    value = edit_available_flights_inputs[field].value
+                    if 'ID' in field:
+                        try:
+                            flight[field] = int(value)
+                        except ValueError:
+                            ui.notify(f'{field} must be a number', type='warning')
+                            return
+                    else:
+                        flight[field] = value
 
                 save_json(available_flight_file, available_flights)
                 load_available_flights()
-                ui.notify('Flight updated successfully', type='positive')
+                ui.notify('Available Flight updated successfully', type='positive')
                 dialog.close()
 
             with ui.row().classes('w-full justify-end'):
