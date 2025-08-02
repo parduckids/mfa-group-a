@@ -467,7 +467,7 @@ def build_agent_view():
             record['Airline'] = airline.get('Company Name', '')
             matched.append(record)
 
-        table_flights.rows = matched
+        table_available_flights.rows = matched
 
     edit_inputs = {}
     edit_airline_inputs = {}
@@ -1085,7 +1085,7 @@ def build_agent_view():
                     with ui.tab_panel(tab_available_flight_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             flight_manage_search_id = ui.input(label='Flight ID').classes('w-full mb-2')
-                            table_flights = ui.table(
+                            table_available_flights = ui.table(
                                 columns=[{'name': n, 'label': n, 'field': n} for n in available_flight_fields], rows=[],
                                 row_key='ID').classes('w-full mb-4')
                             ui.button('Search', on_click=load_available_flights).classes('w-full').classes(
