@@ -282,7 +282,6 @@ def build_agent_view():
             'Type': 'Flight'
         }
 
-        print(record)
         flights.append(record)
         save_json(flight_file, flights)
 
@@ -411,10 +410,8 @@ def build_agent_view():
             None
         """
         q = flight_booking_manage_search_id.value.strip()
-        print(q)
         # If search query is empty, use all flights, otherwise filter by the query
         source_flights = flights if not q else [f for f in flights if str(f.get('Client_ID', '')).strip() == q]
-        print(source_flights)
 
         matched = []
         for f in source_flights:
@@ -431,9 +428,7 @@ def build_agent_view():
                 'Start City': f.get('Start City', ''),
                 'End City': f.get('End City', '')
             }
-            print(record)
             matched.append(record)
-        print(matched)
         table_flights.rows = matched
 
 
@@ -996,7 +991,6 @@ def build_agent_view():
                                         'This field is required': lambda value: bool(value and value.strip())}
 
                                 selected_id = str(e.value)
-                                print(f"Selected ID: {selected_id} (type: {type(selected_id)})")
 
                                 selected_flight = next(
                                     (f for f in available_flights if str(f['Flight_ID']) == selected_id), None
@@ -1066,9 +1060,9 @@ def build_agent_view():
                             ).props('searchable true clearable').classes('w-full mb-2')
                             airline_select.validation = {'This field is required': bool}
                             default_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
+
                             date_input = ui.input(label='Date', value=default_date).props(
                                 'type="datetime-local"').classes('w-full mb-2')
-                            date_input = ui.input(label='Date').props('type="datetime-local"').classes('w-full mb-2')
                             date_input.validation = {'This field is required': bool}
 
                             start_city_input = ui.input(label='Start City').classes('w-full mb-2')
