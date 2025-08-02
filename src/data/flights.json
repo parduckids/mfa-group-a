@@ -1,55 +1,59 @@
 [
   {
-    "booking_id": 1,
+    "Booking_ID": 1,
     "Client_ID": 3,
     "Airline_ID": 1,
+    "Flight_ID": 1,
     "Date": "12/07/2026",
     "Start City": "London",
     "End City": "Paris",
     "Type": "Flight"
   },
   {
-    "booking_id": 2,
+    "Booking_ID": 2,
     "Client_ID": 1,
     "Airline_ID": 1,
+    "Flight_ID": 2,
     "Date": "2025-07-29T00:37",
     "Start City": "Paris",
     "End City": "Sidney",
     "Type": "Flight"
   },
   {
-    "booking_id": 3,
+    "Booking_ID": 3,
     "Client_ID": 1,
     "Airline_ID": 1,
+    "Flight_ID": 3,
     "Date": "2025-07-29T00:18",
     "Start City": "Brisbane",
     "End City": "London",
     "Type": "Flight"
   },
   {
-    "booking_id": 4,
+    "Booking_ID": 4,
     "Client_ID": 4,
     "Airline_ID": 2,
+    "Flight_ID": 5,
     "Date": "2025-07-29T00:50",
     "Start City": "Budapest",
     "End City": "Tenerife",
     "Type": "Flight"
   },
   {
-    "booking_id": 5,
+    "Booking_ID": 5,
     "Client_ID": 4,
     "Airline_ID": 1,
-    "flight_ID": 7,
+    "Flight_ID": 7,
     "Date": "2026-12-09T12:30",
     "Start City": "London",
     "End City": "Naples",
     "Type": "Flight"
   },
   {
-    "booking_id": 6,
+    "Booking_ID": 6,
     "Client_ID": 5,
     "Airline_ID": 1,
-    "flight_ID": 7,
+    "Flight_ID": 7,
     "Date": "2026-12-09T12:30",
     "Start City": "London",
     "End City": "Naples",
