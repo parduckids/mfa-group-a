@@ -1,8 +1,8 @@
 [
   {
     "Booking_ID": 1,
-    "Client_ID": "4",
-    "Airline_ID": 1,
+    "Client_ID": 1,
+    "Airline_ID": 2,
     "Flight_ID": 1,
     "Date": "12/07/2026",
     "Start City": "London",
