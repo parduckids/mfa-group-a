@@ -131,6 +131,21 @@ def build_agent_view():
             return max(int(f.get('flight_ID', 0)) for f in available_flights) + 1
         return 1
 
+    def get_next_booking_ID():
+        """
+        Generate the next available Booking ID.
+
+        Returns the next available Booking ID by finding the maximum existing ID and adding 1.
+        If no clients exist, returns 1.
+
+        Returns:
+            int: The next available flight ID.
+        """
+        if flights:
+            return max(int(f.get('booking_id', 0)) for f in flights) + 1
+        return 1
+
+
     def create_client():
         """
         Create a new client record and save it to the client file.
@@ -253,7 +268,10 @@ def build_agent_view():
             ui.notify('Please choose a client ID.', type='warning')
             return
 
+        new_booking_id = get_next_booking_ID
+
         record = {
+            'booking_id': new_booking_id(),
             'Client_ID': client_select.value,
             'Airline_ID': flight_form_inputs['airline_select'].value,
             'flight_ID': flight_select.value,
