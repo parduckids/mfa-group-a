@@ -626,23 +626,24 @@ def build_agent_view():
 
         If the flight is not found, a warning notification is displayed.
         """
-        available_flight_fields = ['Flight_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
-        q = flight_edit_search_id.value.strip()
+        #available_flight_fields = ['Flight_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
+        q = available_flight_edit_search_id.value.strip()
 
         flight = next((f for f in available_flights if str(f.get('Flight_ID', '')).strip() == q), None)
         if not flight:
             ui.notify('Flight not found', type='warning')
             return
 
-        edit_flight_inputs.clear()
+        edit_available_flights_inputs.clear()
         with ui.dialog() as dialog, ui.card():
             ui.label(f"Edit Flight ID: {flight.get('Flight_ID')}").classes("text-lg font-bold mb-2")
+            #available_flight_fields = ['Flight_ID', 'Airline_ID', 'Date', 'Start City', 'End City']
 
             for field in available_flight_fields:
                 value = flight.get(field, '')
-                edit_flight_inputs[field] = ui.input(label=field, value=value).classes('mb-2 w-full')
+                edit_available_flights_inputs[field] = ui.input(label=field, value=value).classes('mb-2 w-full')
 
-            def save_flight():
+            def save_available_flight():
                 """
                 Save the modified flight data and update the UI.
 
@@ -652,7 +653,7 @@ def build_agent_view():
                 the dialog.
                 """
                 for field in available_flight_fields:
-                    flight[field] = edit_flight_inputs[field].value
+                    flight[field] = edit_available_flights_inputs[field].value
 
                 save_json(available_flight_file, available_flights)
                 load_available_flights()
@@ -663,7 +664,7 @@ def build_agent_view():
                 ui.button('Cancel', on_click=dialog.close).classes(
                     'border border-black text-black bg-white'
                 )
-                ui.button('Save Changes', on_click=save_flight, color="green")
+                ui.button('Save Changes', on_click=save_available_flight, color="green")
         dialog.open()
 
     def delete_client():
@@ -1086,6 +1087,12 @@ def build_agent_view():
                                 'w-full border border-black text-black bg-white'
                             )
                             load_available_flights()
+                    with ui.tab_panel(tab_available_flight_edit):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            available_flight_edit_search_id = ui.input(label='Flight ID').classes('w-full mb-2')
+                            ui.button('Edit', on_click=edit_available_flights).classes(
+                                'w-full border border-black text-black bg-white'
+                            )
 
 def startup() -> None:
     """Initializes the application, setting up the login screen and the protected agent dashboard."""
