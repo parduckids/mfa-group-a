@@ -269,10 +269,10 @@ def build_agent_view():
             ui.notify('Please choose a client ID.', type='warning')
             return
 
-        new_Booking_ID = get_next_booking_id
+        new_booking_id = get_next_booking_id
 
         record = {
-            'Booking_ID': new_Booking_ID(),
+            'Booking_ID': new_booking_id(),
             'Client_ID': client_select.value,
             'Airline_ID': flight_form_inputs['airline_select'].value,
             'Flight_ID': flight_select.value,
@@ -315,7 +315,7 @@ def build_agent_view():
             None
         """
         flight_inputs = [airline_select.value, date_input.value, start_city_input.value, end_city_input.value]
-        if not all(inp.validate() for inp in flight_inputs):
+        if not airline_select.value:
             ui.notify('Please fill in all flight details.', type='warning')
             return
 
@@ -778,47 +778,82 @@ def build_agent_view():
                 ui.button('Yes, delete', on_click=perform_delete, color='red')
         dialog.open()
 
-    def delete_airline_from_available_flights():
+    def delete_client():
         """
-        Delete an airline and all associated available flights after confirmation.
+        Delete a client and all associated flights after confirmation.
 
-        Finds an airline by ID. If found, it shows a confirmation dialog.
-        Upon confirmation, it removes the airline from the `airlines` list and
-        also removes all flights associated with that airline from the `available_flights` list.
-        Finally, it saves the updated lists and refreshes the UI.
+        Finds a client by ID. If found, it presents a confirmation dialog.
+        Upon confirmation, it removes the client from the `clients` list and
+        also removes all flights associated with that client from the `flights` list.
+        It then saves both updated lists to their respective JSON files and refreshes the UI.
         """
-        q = airline_delete_search_id.value.strip()
-        airline_to_delete = next((a for a in airlines if str(a.get('ID', '')).strip() == q), None)
 
-        if not airline_to_delete:
-            ui.notify('Airline not found', type='warning')
+        q = client_delete_search_id.value.strip()
+        client_to_delete = next((c for c in clients if str(c.get('ID', '')).strip() == q), None)
+
+        if not client_to_delete:
+            ui.notify('Client not found', type='warning')
             return
 
         async def perform_delete():
-            global airlines, available_flights
-            airline_id_to_delete = airline_to_delete['ID']
-            airlines = [a for a in airlines if a['ID'] != airline_id_to_delete]
-            available_flights = [f for f in available_flights if f.get('Airline_ID') != airline_id_to_delete]
+            global clients, flights
+            client_id_to_delete = client_to_delete['ID']
+            clients = [c for c in clients if c['ID'] != client_id_to_delete]
+            flights = [f for f in flights if f.get('Client_ID') != client_id_to_delete]
 
-            save_json(airline_file, airlines)
-            save_json(available_flight_file, available_flights)
+            save_json(client_file, clients)
+            save_json(flight_file, flights)
 
-            load_airlines()
-            load_available_flights()
+            load_clients()
+            load_flights()
 
-            new_airline_options = {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines}
-            airline_select.set_options(new_airline_options)
+            # Update the client dropdown's options.
+            new_client_options = {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients}
+            client_select.set_options(new_client_options)
+            flight_delete_client_select.set_options(new_client_options)
 
-            ui.notify(f'Airline {q} and all associated available flights have been deleted.', type='positive')
+            ui.notify(f'Client {q} and all associated flights have been deleted.', type='positive')
             dialog.close()
-            airline_delete_search_id.value = ''
+            client_delete_search_id.value = ''
 
         with ui.dialog() as dialog, ui.card():
-            ui.label(f"Are you sure you want to delete airline {q} and all associated available flights?")
+            ui.label(f"Are you sure you want to delete client {q} and all their flights?")
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close).classes(
-                    'border border-black text-black bg-white'
-                )
+                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Yes, delete', on_click=perform_delete, color='red')
+        dialog.open()
+
+    def delete_available_flights():
+        """
+        Delete a flight from available_flights after confirmation.
+
+        Searches for a flight by Flight_ID. If found, it presents a confirmation dialog.
+        Upon confirmation, it removes the flight from the `available_flights` list,
+        saves the updated list to the JSON file, and refreshes the UI.
+        """
+        q = available_flight_delete_search_id.value.strip()
+
+        flight_to_delete = next((f for f in available_flights if str(f.get('Flight_ID', '')).strip() == q), None)
+
+        if not flight_to_delete:
+            ui.notify('Flight not found', type='warning')
+            return
+
+        async def perform_delete():
+            global available_flights
+            available_flights = [f for f in available_flights if f.get('Flight_ID') != int(q)]
+
+            save_json(available_flight_file, available_flights)
+            load_available_flights()
+
+            ui.notify(f'Flight {q} has been deleted from available flights.', type='positive')
+            dialog.close()
+            available_flight_delete_search_id.value = ''
+
+        with ui.dialog() as dialog, ui.card():
+            ui.label(f"Are you sure you want to delete flight {q}?")
+            with ui.row().classes('w-full justify-end'):
+                ui.button('Cancel', on_click=dialog.close)
                 ui.button('Yes, delete', on_click=perform_delete, color='red')
         dialog.open()
 
@@ -1112,6 +1147,12 @@ def build_agent_view():
                             available_flight_edit_search_id = ui.input(label='Flight ID').classes('w-full mb-2')
                             ui.button('Edit', on_click=edit_available_flights).classes(
                                 'w-full border border-black text-black bg-white'
+                            )
+                    with ui.tab_panel(tab_available_flight_delete):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            available_flight_delete_search_id = ui.input(label='Flight ID').classes('w-full mb-2')
+                            ui.button('Delete Available Flight', on_click=delete_available_flights).classes(
+                                'w-full border border-red text-red bg-white'
                             )
 
 def startup() -> None:
