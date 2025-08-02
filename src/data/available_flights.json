@@ -38,5 +38,12 @@
     "Start City": "test start",
     "End City": "test end",
     "Type": "Flight"
+  },
+  {
+    "flight_ID": 7,
+    "Airline_ID": 1,
+    "Date": "2026-12-09T12:30",
+    "Start City": "London",
+    "End City": "Naples"
   }
 ]

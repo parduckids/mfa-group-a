@@ -32,11 +32,12 @@
     "Type": "Flight"
   },
   {
-    "Client_ID": 1,
+    "Client_ID": 4,
     "Airline_ID": 1,
-    "Date": "2025-07-30T12:39",
-    "Start City": "test start",
-    "End City": "test end",
+    "flight_ID": 7,
+    "Date": "2026-12-09T12:30",
+    "Start City": "London",
+    "End City": "Naples",
     "Type": "Flight"
   }
 ]

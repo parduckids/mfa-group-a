@@ -9,7 +9,7 @@ data_dir = Path(__file__).parent.parent / 'data'
 client_file = data_dir / 'clients.json'
 airline_file = data_dir / 'airlines.json'
 flight_file = data_dir / 'flights.json'
-available_flight_file = data_dir / 'availableflights.json'
+available_flight_file = data_dir / 'available_flights.json'
 
 
 # Helpers to load & save JSON
@@ -75,10 +75,11 @@ def build_agent_view():
 
     # Define flight fields
     flight_manage_columns = [
+        {'name': 'Flight ID', 'label': 'Flight ID', 'field': 'Flight ID'},
         {'name': 'Client ID', 'label': 'Client ID', 'field': 'Client ID'},
-        {'name': 'Client', 'label': 'Client Name', 'field': 'Client'},
+        #{'name': 'Client', 'label': 'Client Name', 'field': 'Client'},
         {'name': 'Airline ID', 'label': 'Airline ID', 'field': 'Airline ID'},
-        {'name': 'Airline', 'label': 'Airline Name', 'field': 'Airline'},
+        #{'name': 'Airline', 'label': 'Airline Name', 'field': 'Airline'},
         {'name': 'Date', 'label': 'Date', 'field': 'Date'},
         {'name': 'Start City', 'label': 'Start City', 'field': 'Start City'},
         {'name': 'End City', 'label': 'End City', 'field': 'End City'}
@@ -126,8 +127,8 @@ def build_agent_view():
         Returns:
             int: The next available flight ID.
         """
-        if airlines:
-            return max(int(f.get('ID', 0)) for f in available_flights) + 1
+        if available_flights:
+            return max(int(f.get('flight_ID', 0)) for f in available_flights) + 1
         return 1
 
     def create_client():
@@ -218,15 +219,74 @@ def build_agent_view():
         # Switch to the view tab after creation
         airline_ops.set_value(tab_airline_manage)
 
+    flight_form_inputs = {}
+
     def create_flight():
+        """
+        Create a new flight record and save it to the flight file.
+
+        This function:
+        - Validates that all flight detail fields are filled.
+        - Collects flight details from user input fields.
+        - Builds a flight record with client, airline, date, and cities.
+        - Adds the 'Client_ID', 'Airline_ID', 'Date', 'Start City', 'End City' and 'Type' fields.
+        - Appends the record to the flights list.
+        - Saves the updated list to a JSON file.
+        - Notifies the user of success.
+        - Clears the input fields.
+        - Switches to the 'View' tab.
+
+        Returns:
+            None
+        """
+
+        flight_inputs = [
+            client_select,
+            flight_select,
+            flight_form_inputs.get('airline_select'),
+            flight_form_inputs.get('date_input'),
+            flight_form_inputs.get('start_city'),
+            flight_form_inputs.get('end_city')
+        ]
+
+        if not client_select.value:
+            ui.notify('Please choose a client ID.', type='warning')
+            return
+
+        record = {
+            'Client_ID': client_select.value,
+            'Airline_ID': flight_form_inputs['airline_select'].value,
+            'flight_ID': flight_select.value,
+            'Date': flight_form_inputs['date_input'].value,
+            'Start City': flight_form_inputs['start_city'].value,
+            'End City': flight_form_inputs['end_city'].value,
+            'Type': 'Flight'
+        }
+
+        print(record)
+        flights.append(record)
+        save_json(flight_file, flights)
+
+        ui.notify('Flight booking created')
+
+        for inp in flight_inputs:
+            inp.value = ''
+
+        # Reset date input to current time
+        flight_form_inputs['date_input'].value = datetime.now().strftime('%Y-%m-%dT%H:%M')
+
+        load_flights()
+        flight_ops.set_value(tab_flight_manage)
+
+    def create_available_flight():
         """
         Create a new available flight record and save it to the available flight file.
 
         This function:
         - Validates that all required flight fields are filled.
         - Generates a unique flight_ID using get_next_available_flight_id().
-        - Collects flight details from user input fields.
-        - Builds a flight record with flight_ID, Airline_ID, Date, Start City, and End City.
+        - Collects available flight details from user input fields.
+        - Builds a available flight record with flight_ID, Airline_ID, Date, Start City, and End City.
         - Appends the record to the available_flights list.
         - Saves the updated list to a JSON file.
         - Notifies the user of success.
@@ -236,7 +296,7 @@ def build_agent_view():
         Returns:
             None
         """
-        flight_inputs = [airline_select, date_input, start_city_input, end_city_input]
+        flight_inputs = [airline_select.value, date_input.value, start_city_input.value, end_city_input.value]
         if not all(inp.validate() for inp in flight_inputs):
             ui.notify('Please fill in all flight details.', type='warning')
             return
@@ -245,7 +305,7 @@ def build_agent_view():
         new_id = get_next_available_flight_id()
 
         record = {
-            'flight_ID': str(new_id),
+            'flight_ID': new_id,
             'Airline_ID': airline_select.value,
             'Date': date_input.value,
             'Start City': start_city_input.value,
@@ -264,7 +324,7 @@ def build_agent_view():
         date_input.value = datetime.now().strftime('%Y-%m-%dT%H:%M')
 
         load_available_flights()
-        flight_bookings_ops.set_value(tab_flight_manage_booking)
+        available_flight_ops.set_value(tab_available_flights)
 
     def load_clients():
         """
@@ -340,10 +400,11 @@ def build_agent_view():
             client = next((c for c in clients if c['ID'] == f['Client_ID']), {})
             airline = next((a for a in airlines if a['ID'] == f['Airline_ID']), {})
             record = {
+                'Flight ID': f.get('flight_ID', ""),
                 'Client ID': f.get('Client_ID', ''),
-                'Client': client.get('Name', ''),
+                #'Client': client.get('Name', ''), #TODO: Add Client Name back in
                 'Airline ID': f.get('Airline_ID', ''),
-                'Airline': airline.get('Company Name', ''),
+                #'Airline': airline.get('Company Name', ''), #TODO: Add Airline Name back in
                 'Date': f.get('Date', ''),
                 'Start City': f.get('Start City', ''),
                 'End City': f.get('End City', '')
@@ -784,7 +845,8 @@ def build_agent_view():
         with ui.tabs().classes('w-full') as main_tabs:
             tab_clients = ui.tab('Clients')
             tab_airlines = ui.tab('Airlines')
-            tab_flights = ui.tab('Flights')
+            tab_flights_bookings = ui.tab('Flights Bookings')
+            tab_available_flights = ui.tab('Available Flights')
         with ui.tab_panels(main_tabs, value=tab_clients).classes('w-full'):
             with ui.tab_panel(tab_clients):
                 with ui.row().classes('w-full justify-center mb-4'):
@@ -871,32 +933,111 @@ def build_agent_view():
                                 'w-full border border-red text-red bg-white'
                             )
 
-            with ui.tab_panel(tab_flights):
+            with ui.tab_panel(tab_flights_bookings):
                 with ui.row().classes('w-full justify-center mb-4'):
-                    ui.label('Flight Bookings').classes('text-xl')
-                with ui.tabs().classes('w-full') as flight_bookings_ops:
-                    tab_flight_create_booking = ui.tab('Create Client Booking')
-                    tab_flight_manage_booking = ui.tab('View Client Booking')
-                    tab_flight_edit_booking = ui.tab('Edit Client Booking')
-                    tab_flight_delete_booking = ui.tab('Delete Client Booking')
-                with ui.tab_panels(flight_bookings_ops).classes('w-full'):
-                    with ui.tab_panel(tab_flight_create_booking):
+                    ui.label('Flight Records').classes('text-xl')
+                with ui.tabs().classes('w-full') as flight_ops:
+                    tab_flight_create = ui.tab('Create Booking')
+                    tab_flight_manage = ui.tab('View Bookings')
+                    tab_flight_edit = ui.tab('Edit Bookings')
+                    tab_flight_delete = ui.tab('Delete Bookings')
+
+                with ui.tab_panels(flight_ops).classes('w-full'):
+                    with ui.tab_panel(tab_flight_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            # Container for dynamic flight form fields
+                            flight_form_container = ui.column().classes('w-full')
+                            flight_form_inputs = {}
+                            def populate_flight_fields(e):
+                                flight_form_container.clear()
+                                with flight_form_container:
+                                    # Create inputs and store in shared dictionary
+                                    flight_form_inputs['airline_select'] = ui.select(
+                                        {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines},
+                                        label='Airline'
+                                    ).props('searchable true clearable').classes('w-full mb-2')
+                                    flight_form_inputs['airline_select'].validation = {'This field is required': bool}
+
+                                    flight_form_inputs['date_input'] = ui.input(label='Date').props(
+                                        'type="datetime-local"').classes('w-full mb-2')
+
+                                    flight_form_inputs['start_city'] = ui.input(label='Start City').classes(
+                                        'w-full mb-2')
+                                    flight_form_inputs['start_city'].validation = {
+                                        'This field is required': lambda value: bool(value and value.strip())}
+
+                                    flight_form_inputs['end_city'] = ui.input(label='End City').classes('w-full mb-2')
+                                    flight_form_inputs['end_city'].validation = {
+                                        'This field is required': lambda value: bool(value and value.strip())}
+
+                                selected_id = str(e.value)
+                                print(f"Selected ID: {selected_id} (type: {type(selected_id)})")
+
+                                selected_flight = next(
+                                    (f for f in available_flights if str(f['flight_ID']) == selected_id), None
+                                )
+
+                                if selected_flight:
+                                    flight_form_inputs['date_input'].set_value(selected_flight.get('Date', ''))
+                                    flight_form_inputs['start_city'].set_value(selected_flight.get('Start City', ''))
+                                    flight_form_inputs['end_city'].set_value(selected_flight.get('End City', ''))
+                                    flight_form_inputs['airline_select'].value = selected_flight.get('Airline_ID', '')
+
+                            # Initial UI elements
+                            flight_select = ui.select(
+                                {f['flight_ID']: f"{f['flight_ID']:09d}" for f in available_flights},
+                                label='Select Flight', on_change=populate_flight_fields
+                            ).props('clearable').classes('w-full mb-2')
+                            flight_select.validation = {'This field is required': bool}
+
                             client_select = ui.select(
                                 {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients},
                                 label='Client'
                             ).props('searchable true clearable').classes('w-full mb-2')
                             client_select.validation = {'This field is required': bool}
 
+                            ui.button('Create Flight', on_click=create_flight).classes('mt-2 w-full')
+
+                    with ui.tab_panel(tab_flight_manage):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            flight_manage_search_id = ui.input(label='Client ID').classes('w-full mb-2')
+                            table_flights = ui.table(columns=flight_manage_columns, rows=[], row_key='Date').classes(
+                                'w-full mb-4')
+                            ui.button('Search', on_click=load_flights).classes('w-full')
+                            load_flights()
+                    with ui.tab_panel(tab_flight_edit):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            flight_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
+                            ui.button('Edit', on_click=edit_flights).classes('w-full')
+                    with ui.tab_panel(tab_flight_delete):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
+                            flight_delete_client_select = ui.select(
+                                {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients},
+                                label='Select Client to see their flights',
+                                on_change=lambda e: update_deletable_flights_list(e.value)
+                            ).props('searchable true clearable').classes('w-full mb-2')
+                            deletable_flights_container = ui.column().classes('w-full')
+
+            with ui.tab_panel(tab_available_flights):
+                with ui.row().classes('w-full justify-center mb-4'):
+                    ui.label('Available Flights').classes('text-xl')
+                with ui.tabs().classes('w-full') as available_flight_ops:
+                    tab_available_flight_create = ui.tab('Create Available Flight')
+                    tab_available_flight_manage = ui.tab('View Available Flight')
+                    tab_available_flight_edit = ui.tab('Edit Available Flight')
+                    tab_available_flight_delete = ui.tab('Delete Available Flight')
+                with ui.tab_panels(available_flight_ops).classes('w-full'):
+                    with ui.tab_panel(tab_available_flight_create):
+                        with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_select = ui.select(
                                 {a['ID']: f"{a['Company Name']} {int(a['ID']):09d}" for a in airlines},
                                 label='Airline'
                             ).props('searchable true clearable').classes('w-full mb-2')
                             airline_select.validation = {'This field is required': bool}
-
                             default_date = datetime.now().strftime('%Y-%m-%dT%H:%M')
                             date_input = ui.input(label='Date', value=default_date).props(
                                 'type="datetime-local"').classes('w-full mb-2')
+                            date_input = ui.input(label='Date').props('type="datetime-local"').classes('w-full mb-2')
                             date_input.validation = {'This field is required': bool}
 
                             start_city_input = ui.input(label='Start City').classes('w-full mb-2')
@@ -907,35 +1048,19 @@ def build_agent_view():
                             end_city_input.validation = {
                                 'This field is required': lambda value: bool(value and value.strip())}
 
-                            ui.button('Create Flight', on_click=create_flight).classes(
+                            ui.button('Create Flight', on_click=create_available_flight).classes(
                                 'mt-2 w-full border border-black text-black bg-white'
                             )
-                    with ui.tab_panel(tab_flight_manage_booking):
+                    with ui.tab_panel(tab_available_flight_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
-                            flight_manage_search_id = ui.input(label='Client ID').classes(
+                            flight_manage_search_id = ui.input(label='Flight ID').classes('w-full mb-2')
+                            table_flights = ui.table(
+                                columns=[{'name': n, 'label': n, 'field': n} for n in available_flight_fields], rows=[],
+                                row_key='ID').classes('w-full mb-4')
+                            ui.button('Search', on_click=load_available_flights).classes('w-full').classes(
                                 'w-full border border-black text-black bg-white'
                             )
-                            table_flights = ui.table(columns=flight_manage_columns, rows=[], row_key='Date').classes(
-                                'w-full mb-4')
-                            ui.button('Search', on_click=load_flights).classes(
-                                'w-full border border-black text-black bg-white'
-                            )
-                            load_flights()
-                    with ui.tab_panel(tab_flight_edit_booking):
-                        with ui.card().classes('mx-auto w-full p-4 shadow'):
-                            flight_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
-                            ui.button('Edit', on_click=edit_flights).classes(
-                                'w-full border border-black text-black bg-white'
-                            )
-                    with ui.tab_panel(tab_flight_delete_booking):
-                        with ui.card().classes('mx-auto w-full p-4 shadow'):
-                            flight_delete_client_select = ui.select(
-                                {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients},
-                                label='Select Client to see their flights',
-                                on_change=lambda e: update_deletable_flights_list(e.value)
-                            ).props('searchable true clearable').classes('w-full mb-2')
-                            deletable_flights_container = ui.column().classes('w-full')
-
+                            load_available_flights()
 
 def startup() -> None:
     """Initializes the application, setting up the login screen and the protected agent dashboard."""
