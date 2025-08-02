@@ -381,8 +381,10 @@ def build_agent_view():
                 dialog.close()
 
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
-                ui.button('Save Changes', on_click=save_changes)
+                ui.button('Cancel', on_click=dialog.close).classes(
+                    'border border-black text-black bg-white'
+                )
+                ui.button('Save Changes', on_click=save_changes, color = 'green')
         dialog.open()
 
     def edit_airlines():
@@ -428,8 +430,10 @@ def build_agent_view():
                 dialog.close()
 
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
-                ui.button('Save Changes', on_click=save_airline)
+                ui.button('Cancel', on_click=dialog.close).classes(
+                                'border border-black text-black bg-white'
+                            )
+                ui.button('Save Changes', on_click=save_airline, color = 'green')
         dialog.open()
 
     def edit_flights():
@@ -473,8 +477,10 @@ def build_agent_view():
                 dialog.close()
 
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
-                ui.button('Save Changes', on_click=save_flight)
+                ui.button('Cancel', on_click=dialog.close).classes(
+                                'border border-black text-black bg-white'
+                            )
+                ui.button('Save Changes', on_click=save_flight, color = "green")
         dialog.open()
 
     def delete_client():
@@ -517,7 +523,9 @@ def build_agent_view():
         with ui.dialog() as dialog, ui.card():
             ui.label(f"Are you sure you want to delete client {q} and all their flights?")
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Cancel', on_click=dialog.close).classes(
+                                'border border-black text-black bg-white'
+                            )
                 ui.button('Yes, delete', on_click=perform_delete, color='red')
         dialog.open()
 
@@ -560,7 +568,9 @@ def build_agent_view():
         with ui.dialog() as dialog, ui.card():
             ui.label(f"Are you sure you want to delete airline {q} and all associated flights?")
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Cancel', on_click=dialog.close).classes(
+                                'border border-black text-black bg-white'
+                            )
                 ui.button('Yes, delete', on_click=perform_delete, color='red')
         dialog.open()
 
@@ -587,7 +597,9 @@ def build_agent_view():
             ui.label(f"To: {flight_to_delete['End City']} on {flight_to_delete['Date']}")
             ui.label(f"Airline: {airline.get('Company Name', 'N/A')}")
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Cancel', on_click=dialog.close).classes(
+                                'border border-black text-black bg-white'
+                            )
                 ui.button('Yes, delete', on_click=perform_delete, color='red')
         dialog.open()
 
@@ -647,23 +659,31 @@ def build_agent_view():
                                         inp.validation = {
                                             'This field is required': lambda value: bool(value and value.strip())}
                                     inputs[field] = inp
-                            ui.button('Create Client', on_click=create_client).classes('mt-2 w-full')
+                            ui.button('Create Client', on_click=create_client).classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                     with ui.tab_panel(tab_client_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             client_manage_search_id = ui.input(label='Client ID').classes('w-full mb-2')
                             table_clients = ui.table(
                                 columns=[{'name': f, 'label': f, 'field': f} for f in client_fields], rows=[],
                                 row_key='ID').classes('w-full mb-4')
-                            ui.button('Search', on_click=load_clients).classes('w-full')
+                            ui.button('Search', on_click=load_clients).classes('w-full').classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                             load_clients()
                     with ui.tab_panel(tab_client_edit):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             client_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
-                            ui.button('Edit', on_click=edit_clients).classes('w-full')
+                            ui.button('Edit', on_click=edit_clients).classes('w-full').classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                     with ui.tab_panel(tab_client_delete):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             client_delete_search_id = ui.input(label='Client ID').classes('w-full mb-2')
-                            ui.button('Delete Client', on_click=delete_client, color='red').classes('w-full')
+                            ui.button('Delete Client', on_click=delete_client).classes(
+                                'w-full border border-red text-red bg-white'
+                            )
 
             with ui.tab_panel(tab_airlines):
                 with ui.row().classes('w-full justify-center mb-4'):
@@ -679,23 +699,31 @@ def build_agent_view():
                             airline_input = ui.input(label='Company Name').classes('w-full mb-2')
                             airline_input.validation = {
                                 'This field is required': lambda value: bool(value and value.strip())}
-                            ui.button('Create Airline', on_click=create_airline).classes('mt-2 w-full')
+                            ui.button('Create Airline', on_click=create_airline).classes('mt-2 w-full').classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                     with ui.tab_panel(tab_airline_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_manage_search_id = ui.input(label='Airline ID').classes('w-full mb-2')
                             table_airlines = ui.table(
                                 columns=[{'name': n, 'label': n, 'field': n} for n in airline_fields], rows=[],
                                 row_key='ID').classes('w-full mb-4')
-                            ui.button('Search', on_click=load_airlines).classes('w-full')
+                            ui.button('Search', on_click=load_airlines).classes('w-full').classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                             load_airlines()
                     with ui.tab_panel(tab_airline_edit):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_edit_search_id = ui.input(label='Airline ID').classes('w-full mb-2')
-                            ui.button('Edit', on_click=edit_airlines).classes('w-full')
+                            ui.button('Edit', on_click=edit_airlines).classes('w-full').classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                     with ui.tab_panel(tab_airline_delete):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             airline_delete_search_id = ui.input(label='Airline ID').classes('w-full mb-2')
-                            ui.button('Delete Airline', on_click=delete_airline, color='red').classes('w-full')
+                            ui.button('Delete Airline', on_click=delete_airline).classes(
+                                'w-full border border-red text-red bg-white'
+                            )
 
             with ui.tab_panel(tab_flights):
                 with ui.row().classes('w-full justify-center mb-4'):
@@ -733,18 +761,26 @@ def build_agent_view():
                             end_city_input.validation = {
                                 'This field is required': lambda value: bool(value and value.strip())}
 
-                            ui.button('Create Flight', on_click=create_flight).classes('mt-2 w-full')
+                            ui.button('Create Flight', on_click=create_flight).classes(
+                                'mt-2 w-full border border-black text-black bg-white'
+                            )
                     with ui.tab_panel(tab_flight_manage):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
-                            flight_manage_search_id = ui.input(label='Client ID').classes('w-full mb-2')
+                            flight_manage_search_id = ui.input(label='Client ID').classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                             table_flights = ui.table(columns=flight_manage_columns, rows=[], row_key='Date').classes(
                                 'w-full mb-4')
-                            ui.button('Search', on_click=load_flights).classes('w-full')
+                            ui.button('Search', on_click=load_flights).classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                             load_flights()
                     with ui.tab_panel(tab_flight_edit):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             flight_edit_search_id = ui.input(label='Client ID').classes('w-full mb-2')
-                            ui.button('Edit', on_click=edit_flights).classes('w-full')
+                            ui.button('Edit', on_click=edit_flights).classes(
+                                'w-full border border-black text-black bg-white'
+                            )
                     with ui.tab_panel(tab_flight_delete):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
                             flight_delete_client_select = ui.select(
@@ -819,7 +855,9 @@ def startup() -> None:
                     ui.label('Agent Login').classes('text-2xl font-bold')
                     username_input = ui.input('Username').props('outlined')
                     password_input = ui.input('Password', password=True, password_toggle_button=True).props('outlined')
-                    ui.button('Login', on_click=lambda: handle_login(username_input, password_input))
+                    ui.button('Login', on_click=lambda: handle_login(username_input, password_input)).classes(
+                        'border border-black text-black bg-white hover:bg-gray-100'
+                    )
                     # Create a hidden marker for the bound level (before) so it can be captured by the test
                     ui.label().bind_text_from(splitter, 'value').classes('splitter-value-before hidden')
 
@@ -840,7 +878,9 @@ def startup() -> None:
                         clients,
                         airlines,
                         flights
-                    ))
+                    )).classes(
+                    'border border-black text-black bg-white hover:bg-gray-100'
+                   )
                     # Create a hidden marker for the bound level (after) so it can be captured by the test
                     ui.label().bind_text_from(splitter, 'value').classes('splitter-value-after hidden')
 
@@ -849,7 +889,9 @@ def startup() -> None:
         with ui.column().classes('w-full items-center gap-4 p-6'):
             with ui.row(wrap=False).classes('w-full justify-between items-center'):
                 ui.label('Agent Dashboard').classes('text-3xl font-bold')
-                ui.button('Logout', on_click=logout)
+                ui.button('Logout', on_click=logout).classes(
+                    'border border-black text-black bg-white hover:bg-gray-100'
+                )
 
             build_agent_view()
     # Create a hidden marker for the bound level so it can be captured by the test
