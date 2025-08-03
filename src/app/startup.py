@@ -71,7 +71,9 @@ def build_agent_view():
     ]
 
     # Define airline fields
-    airline_fields = ['ID', 'Type', 'Company Name']
+    airline_fields = [
+        'ID', 'Type', 'Company Name'
+    ]
 
     # Define flight fields
     flight_manage_columns = [
