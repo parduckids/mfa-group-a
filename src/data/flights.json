@@ -4,7 +4,7 @@
     "Client_ID": 1,
     "Airline_ID": 2,
     "Flight_ID": 1,
-    "Date": "12/07/2026",
+    "Date": "12/07/2026T00:37",
     "Start City": "London",
     "End City": "Paris",
     "Type": "Flight"
