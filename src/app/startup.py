@@ -778,51 +778,6 @@ def build_agent_view():
                 ui.button('Yes, delete', on_click=perform_delete, color='red')
         dialog.open()
 
-    def delete_client():
-        """
-        Delete a client and all associated flights after confirmation.
-
-        Finds a client by ID. If found, it presents a confirmation dialog.
-        Upon confirmation, it removes the client from the `clients` list and
-        also removes all flights associated with that client from the `flights` list.
-        It then saves both updated lists to their respective JSON files and refreshes the UI.
-        """
-
-        q = client_delete_search_id.value.strip()
-        client_to_delete = next((c for c in clients if str(c.get('ID', '')).strip() == q), None)
-
-        if not client_to_delete:
-            ui.notify('Client not found', type='warning')
-            return
-
-        async def perform_delete():
-            global clients, flights
-            client_id_to_delete = client_to_delete['ID']
-            clients = [c for c in clients if c['ID'] != client_id_to_delete]
-            flights = [f for f in flights if f.get('Client_ID') != client_id_to_delete]
-
-            save_json(client_file, clients)
-            save_json(flight_file, flights)
-
-            load_clients()
-            load_flights()
-
-            # Update the client dropdown's options.
-            new_client_options = {c['ID']: f"{c['Name']} {int(c['ID']):09d}" for c in clients}
-            client_select.set_options(new_client_options)
-            flight_delete_client_select.set_options(new_client_options)
-
-            ui.notify(f'Client {q} and all associated flights have been deleted.', type='positive')
-            dialog.close()
-            client_delete_search_id.value = ''
-
-        with ui.dialog() as dialog, ui.card():
-            ui.label(f"Are you sure you want to delete client {q} and all their flights?")
-            with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
-                ui.button('Yes, delete', on_click=perform_delete, color='red')
-        dialog.open()
-
     def delete_available_flights():
         """
         Delete a flight from available_flights after confirmation.
