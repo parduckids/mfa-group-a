@@ -13,20 +13,5 @@
     "ID": 3,
     "Type": "Airline",
     "Company Name": "test airline name"
-  },
-  {
-    "ID": 4,
-    "Type": "Airline",
-    "Company Name": "test airline name"
-  },
-  {
-    "ID": 5,
-    "Type": "Airline",
-    "Company Name": "test airline name"
-  },
-  {
-    "ID": 6,
-    "Type": "Airline",
-    "Company Name": "test airline name"
   }
 ]
