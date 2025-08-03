@@ -491,13 +491,16 @@ def build_agent_view():
         """
         Open a dialog to edit an existing client's information.
 
-        This function searches for a client by the ID entered in the search input field.
-        If a matching client is found, a dialog is displayed with input fields pre-filled with
-        the client's data. The user can edit all fields except 'ID' and 'Type'. Upon saving,
-        the client's data is updated and saved to a JSON file.
+        Searches for a client by the ID entered in the search input field. If found,
+        displays a dialog with input fields pre-filled with the client's data.
+        The fields 'ID' and 'Type' are read-only; other fields can be edited.
+        Upon saving, updates the client's data, saves the entire clients list to a JSON file,
+        refreshes the UI client table, shows a success notification, and closes the dialog.
 
-        The dialog includes options to save changes or cancel the operation.
-        If the client ID is not found, a warning notification is shown.
+        If the client is not found, a warning notification is displayed.
+
+        Returns:
+            None
         """
         q = client_edit_search_id.value.strip()
         client = next((c for c in clients if str(c.get('ID', '')).strip() == q), None)
@@ -518,10 +521,12 @@ def build_agent_view():
                 """
                 Save the modified client data and update the UI.
 
-                This function collects the current values from the edit input fields,
-                updates the client object, saves all clients to the JSON file, refreshes
-                the UI table if visible, and displays a success notification. Finally, it
-                closes the edit dialog.
+                Collects current values from the edit input fields, updates the client object,
+                saves the full clients list to the JSON file, refreshes the client table in the UI,
+                displays a success notification, and closes the edit dialog.
+
+                Returns:
+                    None
                 """
                 for field in client_fields:
                     client[field] = edit_inputs[field].value
