@@ -446,8 +446,6 @@ def build_agent_view():
                 'Start City': f.get('Start City', ''),
                 'End City': f.get('End City', '')
             }
-            print(f"Looking for client with ID: {client_id}")
-            print(f"Matched client: {client}")
             matched.append(record)
 
         table_flights.rows = matched

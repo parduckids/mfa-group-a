@@ -55,7 +55,7 @@
     "Airline_ID": 1,
     "Flight_ID": 7,
     "Date": "2026-12-09T12:30",
-    "Start City": "London",
+    "Start City": "London added text",
     "End City": "Naples",
     "Type": "Flight"
   },
@@ -64,28 +64,8 @@
     "Client_ID": 1,
     "Airline_ID": 1,
     "Flight_ID": 1,
-    "Date": "12/07/2026",
-    "Start City": "London",
-    "End City": "Paris",
-    "Type": "Flight"
-  },
-  {
-    "Booking_ID": 8,
-    "Client_ID": 1,
-    "Airline_ID": 1,
-    "Flight_ID": 1,
-    "Date": "12/07/2026",
-    "Start City": "London",
-    "End City": "Paris",
-    "Type": "Flight"
-  },
-  {
-    "Booking_ID": 9,
-    "Client_ID": 1,
-    "Airline_ID": 1,
-    "Flight_ID": 1,
-    "Date": "12/07/2026",
-    "Start City": "London",
+    "Date": "12/07/2026T00:37",
+    "Start City": "London added text",
     "End City": "Paris",
     "Type": "Flight"
   }
