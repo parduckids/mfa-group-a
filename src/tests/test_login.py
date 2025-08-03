@@ -1,46 +1,94 @@
 import pytest
-from nicegui.testing import User, Screen
+from nicegui.testing import Screen
 from app import startup
+from selenium.webdriver.common.keys import Keys
+from tests.utils import find_visible_buttons, mod
 
-pytest_plugins = ['nicegui.testing.user_plugin']
+@pytest.mark.order(7)
+def test_login_logoff(screen: Screen) -> None:
+    screen.open('/')
+    
+    # Expand the panel first
+    screen.find('Agent Login').click()
+    screen.wait(0.5)
 
-@pytest.mark.module_under_test(startup)
-async def test_login_logoff(user: User) -> None:
-    await user.open('/')
+    # Fill in credentials
+    inputs = screen.find_all_by_tag('input')
+    inputs[0].send_keys('admin')  
+    inputs[1].send_keys('admin')  
 
-    # Check whether you are on the login screen
-    await user.should_see('Login')
-
-    # Try to login with the correct password and confirm
-    user.find('Username').type('admin')
-    user.find('Password').type('admin').trigger('keydown.enter')
-    await user.should_see('Logout')
+    # Click Login
+    login_button = find_visible_buttons(screen)
+    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
+    screen.wait(1)
+    screen.find('login successful')
 
     # Try to logout and confirm
-    user.find('Logout').click()
-    await user.should_see('Login')
+    buttons_logout = find_visible_buttons(screen)
+    visible_buttons_logout = [btn for btn in buttons_logout if btn.is_displayed()]
+    next(b for b in visible_buttons_logout if b.text == 'LOGOUT').click()
+    screen.wait(1)
+    
+    screen.find('Login')
+    screen.find('logged out')
 
-@pytest.mark.module_under_test(startup)
-async def test_wrong_password(user: User) -> None:
-    await user.open('/')
+@pytest.mark.order(8)
+def test_wrong_password(screen: Screen) -> None:
+    screen.open('/')
+    
+    # Expand the panel first
+    screen.find('Agent Login').click()
+    screen.wait(0.5)
 
-    # Check whether you are on the login screen
-    await user.should_see('Login')
+    # Confirm failed login with correct username and wrong password    
+    inputs = screen.find_all_by_tag('input')
+    inputs[0].send_keys('admin')  
+    inputs[1].send_keys('wrong')
 
-    # Confirm failed login with correct username and wrong password
-    user.find('Username').type('admin')
-    user.find('Password').type('wrong').trigger('keydown.enter')
-    await user.should_see('Username')
-    await user.should_see('Password')
-
+    # Click Login
+    login_button = find_visible_buttons(screen)
+    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
+    screen.wait(1)
+    screen.find('invalid credentials')
+    screen.should_contain('Username')
+    screen.should_contain('Password')
+    screen.wait(6) # Wait for the notification to dissappear
+    
     # Confirm failed login with wrong username and wrong password
-    user.find('Username').type('wrong')
-    user.find('Password').type('wrong').trigger('keydown.enter')
-    await user.should_see('Username')
-    await user.should_see('Password')
+    inputs[0].click()
+    inputs[0].send_keys(mod + 'a')
+    inputs[0].send_keys(Keys.DELETE)
+    inputs[1].click()
+    inputs[1].send_keys(mod + 'a')
+    inputs[1].send_keys(Keys.DELETE)
+
+    inputs[0].send_keys('wrong')  
+    inputs[1].send_keys('wrong')
+
+    # Click Login
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
+    screen.wait(1)
+    screen.find('invalid credentials')
+    screen.should_contain('Username')
+    screen.should_contain('Password')
+    screen.wait(6) # Wait for the notification to dissappear
 
     # Confirm failed login with wrong username and correct password
-    user.find('Username').type('wrong')
-    user.find('Password').type('admin').trigger('keydown.enter')
-    await user.should_see('Username')
-    await user.should_see('Password')
+    inputs[0].click()
+    inputs[0].send_keys(mod + 'a')
+    inputs[0].send_keys(Keys.DELETE) 
+    inputs[1].click()
+    inputs[1].send_keys(mod + 'a')
+    inputs[1].send_keys(Keys.DELETE)
+    
+    inputs[0].send_keys('wrong')
+    inputs[1].send_keys('admin') 
+
+    # Click Login
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
+    screen.wait(1)
+    screen.find('invalid credentials')
+    screen.should_contain('Username')
+    screen.should_contain('Password')

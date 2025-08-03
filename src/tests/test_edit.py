@@ -2,14 +2,11 @@ import pytest
 from nicegui.testing import Screen
 from app import startup
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 import platform
+from tests.utils import find_visible_buttons, mod, input_text, get_highest_id_value
+from pathlib import Path
 
-mod = Keys.COMMAND if platform.system() == 'Darwin' else Keys.CONTROL
-
-pytest_plugins = ['nicegui.testing.plugin']
-
-@pytest.mark.module_under_test(startup)
+@pytest.mark.order(23)
 def test_edit_client(screen: Screen):
     screen.open('/')
     
@@ -23,8 +20,9 @@ def test_edit_client(screen: Screen):
     inputs[1].send_keys('admin')  
 
     # Login
-    button = screen.find_all_by_tag('button')
-    button[0].click()
+    login_button = find_visible_buttons(screen)
+    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
     screen.wait(0.5)
     
     # Clients tab
@@ -34,49 +32,47 @@ def test_edit_client(screen: Screen):
     screen.find('Edit').click()
     screen.wait(6)
     
-    screen.find('Edit')
-    button_view = screen.find_all_by_tag('button')
-    button_view[3].click()
-    screen.wait(1)
+    edit_button = find_visible_buttons(screen)
+    visible_buttons_edit = [btn for btn in edit_button if btn.is_displayed()]
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_contain('Client not found')
     screen.wait(6) # wait for the notification to disappear
     
-    inputs = screen.find_all_by_tag('input')
-    
-    def input_text(text):
-        # Select the field and clear the content
-        inputs[-1].click()
-        inputs[-1].send_keys(mod + 'a')
-        inputs[-1].send_keys(Keys.DELETE)
-        
-        # Add text
-        inputs[-1].send_keys(text)
-        
-        # Click and wait 
-        button_view[3].click()
-        screen.wait(1)
-    
-    input_text(text='a')
+    input_text(screen, text='wrong')
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_contain('Client not found')
     screen.wait(6) # wait for the notification to disappear
     
-    input_text(text='5')
+    clients_path = Path('src/data/clients.json')
+    client_id = get_highest_id_value(clients_path, 'ID')
+    
+    input_text(screen, client_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_not_contain('Client not found')
     screen.should_contain('Edit Client ID:')
     
-    screen.find('Cancel').click()
+    cancel_button = find_visible_buttons(screen)
+    visible_buttons_cancel = [btn for btn in cancel_button if btn.is_displayed()]
+    next(b for b in visible_buttons_cancel if b.text == 'CANCEL').click()
     screen.wait(1)
     
-    input_text(text='5')
+    input_text(screen, client_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     input_element = screen.selenium.find_element(By.XPATH, '//*[@aria-label="Name"]')
     input_element.send_keys(' added text')
     screen.wait(0.5)
     
-    screen.find('Save Changes').click()
+    save_changes_button = find_visible_buttons(screen)
+    visible_buttons_save_changes = [btn for btn in save_changes_button if btn.is_displayed()]
+    next(b for b in visible_buttons_save_changes if b.text == 'SAVE CHANGES').click()
     screen.wait(1)
     screen.should_contain('Client updated successfully')
     
-@pytest.mark.module_under_test(startup)
+@pytest.mark.order(24)
 def test_edit_airline(screen: Screen):
     screen.open('/')
     
@@ -90,8 +86,9 @@ def test_edit_airline(screen: Screen):
     inputs[1].send_keys('admin')  
 
     # Login
-    button = screen.find_all_by_tag('button')
-    button[0].click()
+    login_button = find_visible_buttons(screen)
+    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
     screen.wait(0.5)
     
     # Airlines tab
@@ -101,50 +98,48 @@ def test_edit_airline(screen: Screen):
     screen.find('Edit').click()
     screen.wait(6)
     
-    screen.find('Edit')
-    button_view = screen.find_all_by_tag('button')
-    button_view[3].click()
-    screen.wait(1)
+    edit_button = find_visible_buttons(screen)
+    visible_buttons_edit = [btn for btn in edit_button if btn.is_displayed()]
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_contain('Airline not found')
     screen.wait(6) # wait for the notification to disappear
     
-    inputs = screen.find_all_by_tag('input')
-    
-    def input_text(text):
-        # Select the field and clear the content
-        inputs[-1].click()
-        inputs[-1].send_keys(mod + 'a')
-        inputs[-1].send_keys(Keys.DELETE)
-        
-        # Add text
-        inputs[-1].send_keys(text)
-        
-        # Click and wait 
-        button_view[3].click()
-        screen.wait(1)
-    
-    input_text(text='a')
+    input_text(screen, text='wrong')
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_contain('Airline not found')
     screen.wait(6) # wait for the notification to disappear
     
-    input_text(text='3')
+    airlines_path = Path('src/data/airlines.json')
+    airline_id = get_highest_id_value(airlines_path, 'ID')
+    
+    input_text(screen, airline_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_not_contain('Airline not found')
     screen.should_contain('Edit Airline ID:')
     
-    screen.find('Cancel').click()
+    cancel_button = find_visible_buttons(screen)
+    visible_buttons_cancel = [btn for btn in cancel_button if btn.is_displayed()]
+    next(b for b in visible_buttons_cancel if b.text == 'CANCEL').click()
     screen.wait(1)
     
-    input_text(text='3')
+    input_text(screen, airline_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     input_element = screen.selenium.find_element(By.XPATH, '//*[@aria-label="Company Name"]')
     input_element.send_keys(' added text')
     screen.wait(0.5)
     
-    screen.find('Save Changes').click()
+    save_changes_button = find_visible_buttons(screen)
+    visible_buttons_save_changes = [btn for btn in save_changes_button if btn.is_displayed()]
+    next(b for b in visible_buttons_save_changes if b.text == 'SAVE CHANGES').click()
     screen.wait(1)
     screen.should_contain('Airline updated successfully')
     
-@pytest.mark.module_under_test(startup)
-def test_edit_flight(screen: Screen):
+@pytest.mark.order(25)
+def test_edit_flight_bookings(screen: Screen):
     screen.open('/')
     
     # Expand the panel
@@ -157,55 +152,121 @@ def test_edit_flight(screen: Screen):
     inputs[1].send_keys('admin')  
 
     # Login
-    button = screen.find_all_by_tag('button')
-    button[0].click()
+    login_button = find_visible_buttons(screen)
+    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
     screen.wait(0.5)
     
     # Flights tab
-    screen.find('Flights').click()
+    screen.find('Flights Bookings').click()
     screen.wait(0.5)
     
     screen.find('Edit').click()
     screen.wait(6)
     
-    screen.find('Edit')
-    button_view = screen.find_all_by_tag('button')
-    button_view[3].click()
+    edit_button = find_visible_buttons(screen)
+    visible_buttons_edit = [btn for btn in edit_button if btn.is_displayed()]
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(1)
     screen.should_contain('Flight not found')
     screen.wait(6) # wait for the notification to disappear
     
-    inputs = screen.find_all_by_tag('input')
-    
-    def input_text(text):
-        # Select the field and clear the content
-        inputs[-1].click()
-        inputs[-1].send_keys(mod + 'a')
-        inputs[-1].send_keys(Keys.DELETE)
-        
-        # Add text
-        inputs[-1].send_keys(text)
-        
-        # Click and wait 
-        button_view[3].click()
-        screen.wait(1)
-    
-    input_text(text='a')
+    input_text(screen, text='wrong')
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_contain('Flight not found')
     screen.wait(6) # wait for the notification to disappear
     
-    input_text(text='3')
+    flights_bookings_path = Path('src/data/flights.json')
+    flights_booking_id = get_highest_id_value(flights_bookings_path, 'Booking_ID')
+    
+    input_text(screen, flights_booking_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     screen.should_not_contain('Flight not found')
     screen.should_contain('Edit Flight for Client ID:')
     
-    screen.find('Cancel').click()
+    cancel_button = find_visible_buttons(screen)
+    visible_buttons_cancel = [btn for btn in cancel_button if btn.is_displayed()]
+    next(b for b in visible_buttons_cancel if b.text == 'CANCEL').click()
     screen.wait(1)
     
-    input_text(text='3')
+    input_text(screen, flights_booking_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
     input_element = screen.selenium.find_element(By.XPATH, '//*[@aria-label="Start City"]')
     input_element.send_keys(' added text')
     screen.wait(0.5)
     
-    screen.find('Save Changes').click()
+    save_changes_button = find_visible_buttons(screen)
+    visible_buttons_save_changes = [btn for btn in save_changes_button if btn.is_displayed()]
+    next(b for b in visible_buttons_save_changes if b.text == 'SAVE CHANGES').click()
     screen.wait(1)
     screen.should_contain('Flight updated successfully')
+    
+@pytest.mark.order(26)
+def test_edit_available_flights(screen: Screen):
+    screen.open('/')
+    
+    # Expand the panel
+    screen.find('Agent Login').click()
+    screen.wait(0.5)
+
+    # Fill in credentials
+    inputs = screen.find_all_by_tag('input')
+    inputs[0].send_keys('admin')  
+    inputs[1].send_keys('admin')  
+
+    # Login
+    login_button = find_visible_buttons(screen)
+    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
+    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
+    screen.wait(0.5)
+    
+    # Flights tab
+    screen.find('Available Flights').click()
+    screen.wait(0.5)
+    
+    screen.find('Edit').click()
+    screen.wait(6)
+    
+    edit_button = find_visible_buttons(screen)
+    visible_buttons_edit = [btn for btn in edit_button if btn.is_displayed()]
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(1)
+    screen.should_contain('Flight not found')
+    screen.wait(6) # wait for the notification to disappear
+    
+    input_text(screen, text='wrong')
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
+    screen.should_contain('Flight not found')
+    screen.wait(6) # wait for the notification to disappear
+    
+    available_flights_path = Path('src/data/available_flights.json')
+    available_flights_id = get_highest_id_value(available_flights_path, 'Flight_ID')
+    
+    input_text(screen, available_flights_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
+    screen.should_not_contain('Flight not found')
+    screen.should_contain('Edit Flight ID:')
+    
+    cancel_button = find_visible_buttons(screen)
+    visible_buttons_cancel = [btn for btn in cancel_button if btn.is_displayed()]
+    next(b for b in visible_buttons_cancel if b.text == 'CANCEL').click()
+    screen.wait(1)
+    
+    input_text(screen, available_flights_id)
+    next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
+    screen.wait(0.5)
+    input_element = screen.selenium.find_element(By.XPATH, '//*[@aria-label="Start City"]')
+    input_element.send_keys(' added text')
+    screen.wait(0.5)
+    
+    save_changes_button = find_visible_buttons(screen)
+    visible_buttons_save_changes = [btn for btn in save_changes_button if btn.is_displayed()]
+    next(b for b in visible_buttons_save_changes if b.text == 'SAVE CHANGES').click()
+    screen.wait(1)
+    screen.should_contain('Flight updated successfully')
+    

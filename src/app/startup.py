@@ -314,7 +314,8 @@ def build_agent_view():
         Returns:
             None
         """
-        flight_inputs = [airline_select.value, date_input.value, start_city_input.value, end_city_input.value]
+        #flight_inputs = [airline_select.value, date_input.value, start_city_input.value, end_city_input.value]
+        flight_inputs = [airline_select, date_input, start_city_input, end_city_input]
         if not airline_select.value:
             ui.notify('Please fill in all flight details.', type='warning')
             return
