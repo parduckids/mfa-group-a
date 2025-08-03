@@ -52,26 +52,26 @@ The left side of the screen features a secure login for travel agents (`Username
 ### Client Management
 
 Within the agent dashboard, the "Clients" tab allows for full CRUD (Create, Read, Update, Delete) operations for client records. Agents can:
-* **Create**: Add new clients with details like name, address, and contact information.
-* **View/Search**: View all clients or search for a specific client by their ID.
-* **Edit**: Modify the details of existing clients.
-* **Delete**: Remove a client and all their associated flights from the system.
+* **Create Client**: Add new clients with details like name, address, and contact information.
+* **View/Search Client**: View all clients or search for a specific client by their ID.
+* **Edit Client**: Modify the details of existing clients.
+* **Delete Client**: Remove a client and all their associated flights from the system.
 
 ### Airline Management
 
 The "Airlines" tab provides complete management capabilities for airline companies. Agents can:
-* **Create**: Add new airlines to the system.
-* **View/Search**: View all airlines or search for a specific airline by its ID.
-* **Edit**: Update airline company names.
-* **Delete**: Remove an airline and all associated flights.
+* **Create Airline**: Add new airlines to the system.
+* **View/Search Airline**: View all airlines or search for a specific airline by its ID.
+* **Edit Airline**: Update airline company names.
+* **Delete Airline**: Remove an airline and all associated flights.
 
 ### Flight Management
 
-The "Flights" tab is the core of the booking system. It allows agents to:
-* **Create**: Book a new flight by selecting an existing client and airline, and specifying the date and travel cities.
-* **View/Search**: View all booked flights or filter them by a specific Client ID.
-* **Edit**: Modify the details of an existing flight booking.
-* **Delete**: Cancel a specific flight booking for a client.
+The "Flights" tab is the core of the booking system and so the tabs reference "Bookings" rather than flights. It allows agents to:
+* **Create Booking**: Book a new flight by selecting an existing client and airline, and specifying the date and travel cities.
+* **View/Search Bookings**: View all booked flights or filter them by a specific Client ID.
+* **Edit Bookings**: Modify the details of an existing flight booking.
+* **Delete Bookings**: Cancel a specific flight booking for a client.
 
 ---
 
