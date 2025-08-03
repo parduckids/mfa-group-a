@@ -45,7 +45,7 @@ def test_edit_client(screen: Screen):
     screen.should_contain('Client not found')
     screen.wait(6) # wait for the notification to disappear
     
-    clients_path = Path('src/data/clients.json')
+    clients_path = Path(__file__).resolve().parent.parent / 'data' / 'clients.json'
     client_id = get_highest_id_value(clients_path, 'ID')
     
     input_text(screen, client_id)
@@ -111,7 +111,7 @@ def test_edit_airline(screen: Screen):
     screen.should_contain('Airline not found')
     screen.wait(6) # wait for the notification to disappear
     
-    airlines_path = Path('src/data/airlines.json')
+    airlines_path = Path(__file__).resolve().parent.parent / 'data' / 'airlines.json'
     airline_id = get_highest_id_value(airlines_path, 'ID')
     
     input_text(screen, airline_id)
@@ -177,7 +177,7 @@ def test_edit_flight_bookings(screen: Screen):
     screen.should_contain('Flight not found')
     screen.wait(6) # wait for the notification to disappear
     
-    flights_bookings_path = Path('src/data/flights.json')
+    flights_bookings_path = Path(__file__).resolve().parent.parent / 'data' / 'flights.json'
     flights_booking_id = get_highest_id_value(flights_bookings_path, 'Booking_ID')
     
     input_text(screen, flights_booking_id)
@@ -243,7 +243,7 @@ def test_edit_available_flights(screen: Screen):
     screen.should_contain('Flight not found')
     screen.wait(6) # wait for the notification to disappear
     
-    available_flights_path = Path('src/data/available_flights.json')
+    available_flights_path = Path(__file__).resolve().parent.parent / 'data' / 'available_flights.json'
     available_flights_id = get_highest_id_value(available_flights_path, 'Flight_ID')
     
     input_text(screen, available_flights_id)
