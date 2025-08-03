@@ -1139,7 +1139,18 @@ def build_agent_view():
                             )
 
 def startup() -> None:
-    """Initializes the application, setting up the login screen and the protected agent dashboard."""
+    """
+    Initializes the application UI, including login and flight search interfaces.
+
+    Sets up the initial state of the application with a split view.
+    The left panel contains the agent login screen, while the right panel includes
+    a flight search form. It also defines the agent dashboard, which is shown after
+    a successful login. The UI elements are connected with internal logic for
+    login validation, flight search, and logout behavior.
+
+    Returns:
+        None. The function modifies UI elements to build and display the application interface.
+    """
 
     def perform_flight_search(client_input, airline_input, container, all_clients, all_airlines, all_flights):
         """
