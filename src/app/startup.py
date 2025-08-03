@@ -730,7 +730,7 @@ def build_agent_view():
                 ui.button('Cancel', on_click=dialog.close).classes(
                                 'border border-black text-black bg-white'
                             )
-                ui.button('Yes, delete', on_click=perform_delete, color='red')
+                ui.button('Yes, delete', on_click=perform_delete, color='red-14')
         dialog.open()
 
     def delete_airline():
@@ -775,7 +775,7 @@ def build_agent_view():
                 ui.button('Cancel', on_click=dialog.close).classes(
                                 'border border-black text-black bg-white'
                             )
-                ui.button('Yes, delete', on_click=perform_delete, color='red')
+                ui.button('Yes, delete', on_click=perform_delete, color='red-14')
         dialog.open()
 
     def delete_available_flights():
@@ -811,7 +811,7 @@ def build_agent_view():
                 ui.button('Cancel', on_click=dialog.close).classes(
                                 'border border-black text-black bg-white'
                             )
-                ui.button('Yes, delete', on_click=perform_delete, color='red')
+                ui.button('Yes, delete', on_click=perform_delete, color='red-14')
         dialog.open()
 
     def confirm_delete_single_flight(flight_to_delete):
@@ -840,7 +840,7 @@ def build_agent_view():
                 ui.button('Cancel', on_click=dialog.close).classes(
                                 'border border-black text-black bg-white'
                             )
-                ui.button('Yes, delete', on_click=perform_delete, color='red')
+                ui.button('Yes, delete', on_click=perform_delete, color='red-14')
         dialog.open()
 
     def update_deletable_flights_list(client_id):
