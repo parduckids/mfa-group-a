@@ -68,10 +68,18 @@ The "Airlines" tab provides complete management capabilities for airline compani
 ### Flight Management
 
 The "Flights" tab is the core of the booking system and so the tabs reference "Bookings" rather than flights. It allows agents to:
-* **Create Booking**: Book a new flight by selecting an existing client and airline, and specifying the date and travel cities.
+* **Create Booking**: Book a new flight by selecting an existing client and a Flight ID which will autopopulate the airline, date and travel cities
 * **View/Search Bookings**: View all booked flights or filter them by a specific Client ID.
 * **Edit Bookings**: Modify the details of an existing flight booking.
 * **Delete Bookings**: Cancel a specific flight booking for a client.
+
+### Available Flight Management
+
+The "Available Flight" tab provides complete management capabilities for available flights. It allows agents to:
+* **Create Available Flight**: Create a new available flight by selecting an airline, and specifying the date and travel cities.
+* **View/Search Available Flights**: View all available filter them by a specific Flight ID.
+* **Edit Available Flights**: Modify the details of an existing available flight.
+* **Delete Available Flights**: Remove a specific available available flight.
 
 ---
 
