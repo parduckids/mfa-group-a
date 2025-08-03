@@ -78,14 +78,15 @@ def build_agent_view():
         {'name': 'Booking ID', 'label': 'Booking ID', 'field': 'Booking ID'},
         {'name': 'Flight ID', 'label': 'Flight ID', 'field': 'Flight ID'},
         {'name': 'Client ID', 'label': 'Client ID', 'field': 'Client ID'},
-        #{'name': 'Client', 'label': 'Client Name', 'field': 'Client'},
+        {'name': 'Client', 'label': 'Client Name', 'field': 'Client'},
         {'name': 'Airline ID', 'label': 'Airline ID', 'field': 'Airline ID'},
-        #{'name': 'Airline', 'label': 'Airline Name', 'field': 'Airline'},
+        {'name': 'Airline', 'label': 'Airline Name', 'field': 'Airline'},
         {'name': 'Date', 'label': 'Date', 'field': 'Date'},
         {'name': 'Start City', 'label': 'Start City', 'field': 'Start City'},
         {'name': 'End City', 'label': 'End City', 'field': 'End City'}
     ]
 
+    #Define available flight fields
     available_flight_fields = [
         'Flight_ID','Airline_ID', 'Date', 'Start City', 'End City'
     ]
@@ -210,6 +211,7 @@ def build_agent_view():
         Returns:
             None
         """
+
         if not airline_input.validate():
             ui.notify('Please fill in the company name.', type='warning')
             return
@@ -314,9 +316,19 @@ def build_agent_view():
         Returns:
             None
         """
-        #flight_inputs = [airline_select.value, date_input.value, start_city_input.value, end_city_input.value]
-        flight_inputs = [airline_select, date_input, start_city_input, end_city_input]
-        if not airline_select.value:
+
+        # Define which available flights fields are required for validation
+        required_available_flights_fields = ['Airline_ID', 'Date', 'Start City', 'End City']
+
+        inputs = {
+            'Airline_ID': airline_select,
+            'Date': date_input,
+            'Start City': start_city_input,
+            'End City': end_city_input
+        }
+
+        validation_ok = all(inputs[field].validate() for field in required_available_flights_fields)
+        if not validation_ok:
             ui.notify('Please fill in all flight details.', type='warning')
             return
 
@@ -416,22 +428,29 @@ def build_agent_view():
 
         matched = []
         for f in source_flights:
-            client = next((c for c in clients if c['ID'] == f['Client_ID']), {})
-            airline = next((a for a in airlines if a['ID'] == f['Airline_ID']), {})
+            client_id = f.get('Client_ID')
+            airline_id = f.get('Airline_ID')
+
+            # Match using integers
+            client = next((c for c in clients if c.get('ID') == client_id), {})
+            airline = next((a for a in airlines if a.get('ID') == airline_id), {})
+
             record = {
                 'Booking ID': f.get('Booking_ID', ""),
                 'Flight ID': f.get('Flight_ID', ""),
-                'Client ID': f.get('Client_ID', ''),
-                #'Client': client.get('Name', ''), #TODO: Add Client Name back in
-                'Airline ID': f.get('Airline_ID', ''),
-                #'Airline': airline.get('Company Name', ''), #TODO: Add Airline Name back in
+                'Client ID': client_id,
+                'Client': client.get('Name', ''),
+                'Airline ID': airline_id,
+                'Airline': airline.get('Company Name', ''),
                 'Date': f.get('Date', ''),
                 'Start City': f.get('Start City', ''),
                 'End City': f.get('End City', '')
             }
+            print(f"Looking for client with ID: {client_id}")
+            print(f"Matched client: {client}")
             matched.append(record)
-        table_flights.rows = matched
 
+        table_flights.rows = matched
 
     def load_available_flights():
         """
