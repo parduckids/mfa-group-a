@@ -707,12 +707,15 @@ def build_agent_view():
 
     def delete_client():
         """
-        Delete a client and all associated flights after confirmation.
+        Initiates deletion of a client and all associated flights with user confirmation.
 
-        Finds a client by ID. If found, it presents a confirmation dialog.
-        Upon confirmation, it removes the client from the `clients` list and
-        also removes all flights associated with that client from the `flights` list.
-        It then saves both updated lists to their respective JSON files and refreshes the UI.
+        Retrieves the client ID from the input field and searches for a matching client.
+        If found, displays a confirmation dialog. Upon confirmation, the client is removed
+        from the clients list, and all related flights are deleted. The updated data is saved,
+        the UI is refreshed, and a success notification is shown.
+
+        Returns:
+            None
         """
         q = client_delete_search_id.value.strip()
         client_to_delete = next((c for c in clients if str(c.get('ID', '')).strip() == q), None)
@@ -722,6 +725,17 @@ def build_agent_view():
             return
 
         async def perform_delete():
+            """
+           Asynchronously deletes the selected client and all associated flights.
+
+           Removes the client identified by `client_to_delete` from the clients list and
+           deletes all flights linked to that client. Updates the stored JSON files, reloads
+           client and flight data, refreshes related dropdown options, and clears the search input.
+           Displays a success notification and closes the confirmation dialog.
+
+           Returns:
+               None
+           """
             global clients, flights
             client_id_to_delete = client_to_delete['ID']
             clients = [c for c in clients if c['ID'] != client_id_to_delete]
