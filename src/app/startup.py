@@ -1219,8 +1219,15 @@ def startup() -> None:
             ui.notify('invalid credentials', type='negative')
 
     def logout():
-        '''Logs out the agent and returns to the welcome screen
-        hides the agent dashboard and makes the split view visible again.'''
+        """
+        Logs out the agent and returns to the welcome screen.
+
+        This function hides the agent dashboard, makes the split view visible again,
+        and displays a logout notification.
+
+        Returns:
+            None
+        """
         agent_dashboard.set_visibility(False)
         splitter.set_visibility(True)
         ui.notify('logged out')
