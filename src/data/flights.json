@@ -58,5 +58,35 @@
     "Start City": "London",
     "End City": "Naples",
     "Type": "Flight"
+  },
+  {
+    "Booking_ID": 7,
+    "Client_ID": 1,
+    "Airline_ID": 1,
+    "Flight_ID": 1,
+    "Date": "12/07/2026",
+    "Start City": "London",
+    "End City": "Paris",
+    "Type": "Flight"
+  },
+  {
+    "Booking_ID": 8,
+    "Client_ID": 1,
+    "Airline_ID": 1,
+    "Flight_ID": 1,
+    "Date": "12/07/2026",
+    "Start City": "London",
+    "End City": "Paris",
+    "Type": "Flight"
+  },
+  {
+    "Booking_ID": 9,
+    "Client_ID": 1,
+    "Airline_ID": 1,
+    "Flight_ID": 1,
+    "Date": "12/07/2026",
+    "Start City": "London",
+    "End City": "Paris",
+    "Type": "Flight"
   }
 ]

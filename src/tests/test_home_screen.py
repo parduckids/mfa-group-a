@@ -1,7 +1,8 @@
 from nicegui import ui
-from nicegui.testing import User, Screen
+from nicegui.testing import Screen
 import pytest
     
+@pytest.mark.order(4)
 def test_splitter_initial(screen: Screen):
     screen.open('/')
     
@@ -20,6 +21,7 @@ def test_splitter_initial(screen: Screen):
     screen.should_contain('Client ID')
     screen.find('Search')
     
+@pytest.mark.order(5)
 def test_splitter_click_left(screen: Screen):
     screen.open('/')
     
@@ -37,6 +39,7 @@ def test_splitter_click_left(screen: Screen):
     text_before = width_before.get_attribute('textContent').strip()
     assert '90' in text_before
     
+@pytest.mark.order(6)
 def test_splitter_click_right(screen: Screen):
     screen.open('/')
     
@@ -45,7 +48,7 @@ def test_splitter_click_right(screen: Screen):
     text_home = width_home.get_attribute('textContent').strip()
     assert '50' in text_home
     
-    # Click on the left side and wait for update
+    # Click on the right side and wait for update
     screen.find('Flight Search ✈️').click()
     screen.wait(1)
     
