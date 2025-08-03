@@ -928,10 +928,10 @@ def build_agent_view():
                 with ui.row().classes('w-full justify-center mb-4'):
                     ui.label('Client Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as client_ops:
-                    tab_client_create = ui.tab('Create')
-                    tab_client_manage = ui.tab('View')
-                    tab_client_edit = ui.tab('Edit')
-                    tab_client_delete = ui.tab('Delete')
+                    tab_client_create = ui.tab('Create Client')
+                    tab_client_manage = ui.tab('View Client')
+                    tab_client_edit = ui.tab('Edit Client')
+                    tab_client_delete = ui.tab('Delete Client')
                 with ui.tab_panels(client_ops).classes('w-full'):
                     with ui.tab_panel(tab_client_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
@@ -973,10 +973,10 @@ def build_agent_view():
                 with ui.row().classes('w-full justify-center mb-4'):
                     ui.label('Airline Records').classes('text-xl')
                 with ui.tabs().classes('w-full') as airline_ops:
-                    tab_airline_create = ui.tab('Create')
-                    tab_airline_manage = ui.tab('View')
-                    tab_airline_edit = ui.tab('Edit')
-                    tab_airline_delete = ui.tab('Delete')
+                    tab_airline_create = ui.tab('Create Airline')
+                    tab_airline_manage = ui.tab('View Airline')
+                    tab_airline_edit = ui.tab('Edit Airline')
+                    tab_airline_delete = ui.tab('Delete Airline')
                 with ui.tab_panels(airline_ops).classes('w-full'):
                     with ui.tab_panel(tab_airline_create):
                         with ui.card().classes('mx-auto w-full p-4 shadow'):
