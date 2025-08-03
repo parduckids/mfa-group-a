@@ -36,8 +36,8 @@ def test_flight_search(screen: Screen) -> None:
     inputs[3].send_keys(mod + 'a')
     inputs[3].send_keys(Keys.DELETE)
     
-    clients_path = Path('src/data/clients.json')
-    airlines_path = Path('src/data/airlines.json')
+    clients_path = Path(__file__).resolve().parent.parent / 'data' / 'clients.json'
+    airlines_path = Path(__file__).resolve().parent.parent / 'data' / 'airlines.json'
     client_id = get_lowest_id_value(clients_path, 'ID')
     airline_id = get_lowest_id_value(airlines_path, 'ID')
 

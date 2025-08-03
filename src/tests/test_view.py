@@ -165,7 +165,7 @@ def test_view_client_search(screen: Screen):
     screen.wait(0.5)
     screen.should_contain('No data available')
     
-    clients_path = Path('src/data/clients.json')
+    clients_path = Path(__file__).resolve().parent.parent / 'data' / 'clients.json'
     client_id = get_highest_id_value(clients_path, 'ID')
     
     input_text(screen, client_id)
@@ -208,7 +208,7 @@ def test_view_airline_search(screen: Screen):
     screen.wait(0.5)
     screen.should_contain('No data available')
     
-    airlines_path = Path('src/data/airlines.json')
+    airlines_path = Path(__file__).resolve().parent.parent / 'data' / 'airlines.json'
     airline_id = get_highest_id_value(airlines_path, 'ID')
     
     input_text(screen, airline_id)
@@ -251,7 +251,7 @@ def test_view_flight_bookings_search(screen: Screen):
     screen.wait(0.5)
     screen.should_contain('No data available')
     
-    flights_bookings_path = Path('src/data/flights.json')
+    flights_bookings_path = Path(__file__).resolve().parent.parent / 'data' / 'flights.json'
     flights_booking_id = get_highest_id_value(flights_bookings_path, 'Client_ID')
     
     input_text(screen, 1)
@@ -294,7 +294,7 @@ def test_view_available_flights_search(screen: Screen):
     screen.wait(0.5)
     screen.should_contain('No data available')
     
-    available_flights_path = Path('src/data/available_flights.json')
+    available_flights_path = Path(__file__).resolve().parent.parent / 'data' / 'available_flights.json'
     available_flights_id = get_highest_id_value(available_flights_path, 'Flight_ID')
     
     input_text(screen, available_flights_id)

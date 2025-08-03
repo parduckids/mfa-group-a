@@ -43,7 +43,7 @@ def test_delete_client(screen: Screen):
     screen.should_contain('Client not found')
     screen.wait(7) # wait for the notification to disappear
     
-    clients_path = Path('src/data/clients.json')
+    clients_path = Path(__file__).resolve().parent.parent / 'data' / 'clients.json'
     client_id = get_highest_id_value(clients_path, "ID")
     
     input_text(screen, client_id)
@@ -106,7 +106,7 @@ def test_delete_airline(screen: Screen):
     screen.should_contain('Airline not found')
     screen.wait(6) # wait for the notification to disappear
     
-    airlines_path = Path('src/data/airlines.json')
+    airlines_path = Path(__file__).resolve().parent.parent / 'data' / 'airlines.json'
     airlines_id = get_highest_id_value(airlines_path, 'ID')
     
     input_text(screen, airlines_id)
@@ -224,7 +224,7 @@ def test_delete_available_flights(screen: Screen):
     screen.should_contain('Flight not found')
     screen.wait(6) # wait for the notification to disappear
     
-    available_flights_path = Path('src/data/available_flights.json')
+    available_flights_path = Path(__file__).resolve().parent.parent / 'data' / 'available_flights.json'
     available_flights_id = get_highest_id_value(available_flights_path, 'Flight_ID')
     
     input_text(screen, available_flights_id)
