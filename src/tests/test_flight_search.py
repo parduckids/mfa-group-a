@@ -7,6 +7,17 @@ from pathlib import Path
 
 @pytest.mark.order(9)
 def test_flight_search(screen: Screen) -> None:
+    """
+    End-to-end test for the flight search functionality.
+
+    This test verifies that:
+        - Submitting the form with no input shows a validation message
+        - Submitting with invalid client/airline IDs shows a "no results" message
+        - Submitting with valid client and airline IDs returns matching results
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
     screen.open('/')
     
     # Expand the panel

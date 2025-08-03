@@ -1,27 +1,20 @@
 import pytest
 from nicegui.testing import Screen
 from app import startup
-from tests.utils import mod, find_visible_buttons, get_highest_id_value, input_text
+from tests.utils import mod, find_visible_buttons, get_highest_id_value, input_text, login_as_admin
 from pathlib import Path
 
 @pytest.mark.order(15)
 def test_view_client(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for viewing client data.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Clients > View
+        - Assert presence of sample client data
+    """
+    login_as_admin(screen)
     
     # Clients tab
     screen.find('Clients').click()
@@ -40,22 +33,15 @@ def test_view_client(screen: Screen):
         
 @pytest.mark.order(16)
 def test_view_airline(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for viewing airline data.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Airlines > View
+        - Assert presence of sample airline data
+    """
+    login_as_admin(screen)
     
     # Airlines tab
     screen.find('Airlines').click()
@@ -71,22 +57,15 @@ def test_view_airline(screen: Screen):
         
 @pytest.mark.order(17)
 def test_view_flights_bookings(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for viewing flight bookings.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Flights Bookings > View Bookings
+        - Assert presence of booking fields and data
+    """
+    login_as_admin(screen)
     
     # Flights bookings tab
     screen.find('Flights Bookings').click()
@@ -101,22 +80,15 @@ def test_view_flights_bookings(screen: Screen):
         
 @pytest.mark.order(18)
 def test_view_available_flights(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for viewing available flights.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Available Flights > View Available Flight
+        - Assert presence of sample flight route data
+    """
+    login_as_admin(screen)
     
     # Flights bookings tab
     screen.find('Available Flights').click()
@@ -132,22 +104,16 @@ def test_view_available_flights(screen: Screen):
         
 @pytest.mark.order(19)
 def test_view_client_search(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for searching clients in the View tab.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Clients > View
+        - Perform search with invalid ID (expect no results)
+        - Perform search with valid ID (expect results)
+    """
+    login_as_admin(screen)
     
     # Clients tab
     screen.find('Clients').click()
@@ -175,22 +141,16 @@ def test_view_client_search(screen: Screen):
     
 @pytest.mark.order(20)
 def test_view_airline_search(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for searching airlines in the View tab.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Airlines > View
+        - Perform search with invalid ID (expect no results)
+        - Perform search with valid ID (expect results)
+    """
+    login_as_admin(screen)
     
     # Airlines tab
     screen.find('Airlines').click()
@@ -218,22 +178,16 @@ def test_view_airline_search(screen: Screen):
  
 @pytest.mark.order(21)
 def test_view_flight_bookings_search(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for searching flight bookings in the View tab.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Flights Bookings > View Bookings
+        - Perform search with invalid client ID (expect no results)
+        - Perform search with valid client ID (expect results)
+    """
+    login_as_admin(screen)
     
     # Flights bookings tab
     screen.find('Flights Bookings').click()
@@ -261,22 +215,16 @@ def test_view_flight_bookings_search(screen: Screen):
 
 @pytest.mark.order(22)
 def test_view_available_flights_search(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for searching available flights in the View tab.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
-
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Steps:
+        - Log in as admin
+        - Navigate to Available Flights > View Available Flight
+        - Perform search with invalid flight ID (expect no results)
+        - Perform search with valid flight ID (expect results)
+    """
+    login_as_admin(screen)
     
     # Flights bookings tab
     screen.find('Available Flights').click()

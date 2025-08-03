@@ -3,27 +3,25 @@ from nicegui.testing import Screen
 from app import startup
 from selenium.webdriver.common.by import By
 import platform
-from tests.utils import find_visible_buttons, mod, input_text, get_highest_id_value
+from tests.utils import find_visible_buttons, mod, input_text, get_highest_id_value, login_as_admin
 from pathlib import Path
 
 @pytest.mark.order(23)
 def test_edit_client(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for editing an existing client.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Attempting to edit without or with an invalid ID shows an error message
+        - Entering a valid client ID opens the edit form
+        - Canceling the form does not make changes
+        - Editing the name field and saving updates the client
+        - A success message is displayed after saving
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Clients tab
     screen.find('Clients').click()
@@ -74,22 +72,20 @@ def test_edit_client(screen: Screen):
     
 @pytest.mark.order(24)
 def test_edit_airline(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for editing an existing airline.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Attempting to edit without or with an invalid ID shows an error message
+        - Entering a valid airline ID opens the edit form
+        - Canceling the form does not make changes
+        - Editing the company name and saving updates the airline
+        - A success message is displayed after saving
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Airlines tab
     screen.find('Airlines').click()
@@ -140,22 +136,20 @@ def test_edit_airline(screen: Screen):
     
 @pytest.mark.order(25)
 def test_edit_flight_bookings(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for editing an existing flight booking.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Attempting to edit without or with an invalid ID shows an error message
+        - Entering a valid booking ID opens the edit form
+        - Canceling the form does not make changes
+        - Editing the 'Start City' and saving updates the booking
+        - A success message is displayed after saving
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Flights tab
     screen.find('Flights Bookings').click()
@@ -206,22 +200,20 @@ def test_edit_flight_bookings(screen: Screen):
     
 @pytest.mark.order(26)
 def test_edit_available_flights(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for editing an existing available flight.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Attempting to edit without or with an invalid ID shows an error message
+        - Entering a valid available flight ID opens the edit form
+        - Canceling the form does not make changes
+        - Editing the 'Start City' and saving updates the flight
+        - A success message is displayed after saving
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Flights tab
     screen.find('Available Flights').click()

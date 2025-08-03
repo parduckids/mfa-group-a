@@ -1,30 +1,28 @@
 import pytest
 from nicegui.testing import Screen
 from app import startup
-from tests.utils import find_visible_buttons
+from tests.utils import find_visible_buttons, login_as_admin
 
 @pytest.mark.order(10)
 def test_tabs_after_login(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel first
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test to verify that all tabs and context-sensitive buttons are correctly displayed
+    after logging in.
 
-    # Now fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    The test performs the following:
+        - Logs in as an admin
+        - Navigates through each entity tab ('Clients', 'Airlines', etc.)
+        - Verifies that all main tabs and action tabs are present
+        - Verifies correct context-specific buttons appear in 'Create', 'View', 'Edit', and 'Delete' tabs
 
-    # Click Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(1)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Create a function checking for all tabs being visible
     def check_visible_tabs():
-        # Assert all tabs exist
+        """Asserts that all expected tabs are visible after login."""
         screen.should_contain('Clients')
         screen.should_contain('Airlines')
         screen.should_contain('Flights Bookings')
@@ -35,6 +33,7 @@ def test_tabs_after_login(screen: Screen):
         screen.should_contain('Delete')
     
     def create_tab_check(upper):
+        """Checks button visibility in the 'Create' tab for the selected entity type."""
         screen.find('Create').click()
         screen.wait(1)
         check_visible_tabs()
@@ -42,75 +41,56 @@ def test_tabs_after_login(screen: Screen):
         visible_buttons = find_visible_buttons(screen)
         
         if upper.capitalize() == 'Clients':
-            assert any(b.text == 'CREATE CLIENT' for b in visible_buttons), 'Create Client button should be visible'
-            assert not any(b.text == 'CREATE AIRLINE' for b in visible_buttons), 'Create Airline button should not be visible'
-            assert not any(b.text == 'CREATE BOOKING' for b in visible_buttons), 'Create Booking button should not be visible'
-            assert not any(b.text == 'CREATE FLIGHT' for b in visible_buttons), 'Create Flight button should not be visible'
-            assert not any(b.text == 'SEARCH' for b in visible_buttons), 'Search button should not be visible'
-            assert not any(b.text == 'EDIT' for b in visible_buttons), 'Edit button should not be visible'
-            assert not any(b.text == 'DELETE CLIENT' for b in visible_buttons), 'Delete Client button should not be visible'
-            
+            assert any(b.text == 'CREATE CLIENT' for b in visible_buttons)
+            assert not any(b.text in {'CREATE AIRLINE', 'CREATE BOOKING', 'CREATE FLIGHT',
+                                      'SEARCH', 'EDIT', 'DELETE CLIENT'} for b in visible_buttons)
+
         elif upper.capitalize() == 'Airlines':
-            assert not any(b.text == 'CREATE CLIENT' for b in visible_buttons), 'Create Client button should be visible'
-            assert any(b.text == 'CREATE AIRLINE' for b in visible_buttons), 'Create Airline button should not be visible'
-            assert not any(b.text == 'CREATE BOOKING' for b in visible_buttons), 'Create Booking button should not be visible'
-            assert not any(b.text == 'CREATE FLIGHT' for b in visible_buttons), 'Create Flight button should not be visible'
-            assert not any(b.text == 'SEARCH' for b in visible_buttons), 'Search button should not be visible'
-            assert not any(b.text == 'EDIT' for b in visible_buttons), 'Edit button should not be visible'
-            assert not any(b.text == 'DELETE CLIENT' for b in visible_buttons), 'Delete Client button should not be visible'
-            
+            assert any(b.text == 'CREATE AIRLINE' for b in visible_buttons)
+            assert not any(b.text in {'CREATE CLIENT', 'CREATE BOOKING', 'CREATE FLIGHT',
+                                      'SEARCH', 'EDIT', 'DELETE CLIENT'} for b in visible_buttons)
+
         elif upper.capitalize() == 'Flights Bookings':
-            assert not any(b.text == 'CREATE CLIENT' for b in visible_buttons), 'Create Client button should be visible'
-            assert not any(b.text == 'CREATE AIRLINE' for b in visible_buttons), 'Create Airline button should not be visible'
-            assert any(b.text == 'CREATE BOOKING' for b in visible_buttons), 'Create Booking button should not be visible'
-            assert not any(b.text == 'CREATE FLIGHT' for b in visible_buttons), 'Create Flight button should not be visible'
-            assert not any(b.text == 'SEARCH' for b in visible_buttons), 'Search button should not be visible'
-            assert not any(b.text == 'EDIT' for b in visible_buttons), 'Edit button should not be visible'
-            assert not any(b.text == 'DELETE CLIENT' for b in visible_buttons), 'Delete Client button should not be visible'
-            
+            assert any(b.text == 'CREATE BOOKING' for b in visible_buttons)
+            assert not any(b.text in {'CREATE CLIENT', 'CREATE AIRLINE', 'CREATE FLIGHT',
+                                      'SEARCH', 'EDIT', 'DELETE CLIENT'} for b in visible_buttons)
+
         elif upper.capitalize() == 'Available Flights':
-            assert not any(b.text == 'CREATE CLIENT' for b in visible_buttons), 'Create Client button should be visible'
-            assert not any(b.text == 'CREATE AIRLINE' for b in visible_buttons), 'Create Airline button should not be visible'
-            assert not any(b.text == 'CREATE BOOKING' for b in visible_buttons), 'Create Booking button should not be visible'
-            assert any(b.text == 'CREATE FLIGHT' for b in visible_buttons), 'Create Flight button should not be visible'
-            assert not any(b.text == 'SEARCH' for b in visible_buttons), 'Search button should not be visible'
-            assert not any(b.text == 'EDIT' for b in visible_buttons), 'Edit button should not be visible'
-            assert not any(b.text == 'DELETE CLIENT' for b in visible_buttons), 'Delete Client button should not be visible'
+            assert any(b.text == 'CREATE FLIGHT' for b in visible_buttons)
+            assert not any(b.text in {'CREATE CLIENT', 'CREATE AIRLINE', 'CREATE BOOKING',
+                                      'SEARCH', 'EDIT', 'DELETE CLIENT'} for b in visible_buttons)
         
     def view_tab_check():
+        """Checks visibility of the 'Search' button in the 'View' tab."""
         screen.find('View').click()
         screen.wait(1)
         check_visible_tabs()
         
         visible_buttons = find_visible_buttons(screen)
 
-        assert not any(b.text == 'CREATE CLIENT' for b in visible_buttons), 'Create Client button should not be visible'
-        assert any(b.text == 'SEARCH' for b in visible_buttons), 'Search button should be visible'
-        assert not any(b.text == 'EDIT' for b in visible_buttons), 'Edit button should not be visible'
-        assert not any(b.text == 'DELETE CLIENT' for b in visible_buttons), 'Delete Client button should not be visible'
+        assert any(b.text == 'SEARCH' for b in visible_buttons)
+        assert not any(b.text in {'CREATE CLIENT', 'EDIT', 'DELETE CLIENT'} for b in visible_buttons)
         
     def edit_tab_check():
+        """Checks visibility of the 'Edit' button in the 'Edit' tab."""
         screen.find('Edit').click()
         screen.wait(1)
         check_visible_tabs()
         
         visible_buttons = find_visible_buttons(screen)
 
-        assert not any(b.text == 'CREATE CLIENT' for b in visible_buttons), 'Create Client button should not be visible'
-        assert not any(b.text == 'SEARCH' for b in visible_buttons), 'Search button should not be visible'
-        assert any(b.text == 'EDIT' for b in visible_buttons), 'Edit button should be visible'
-        assert not any(b.text == 'DELETE CLIENT' for b in visible_buttons), 'Delete Client button should not be visible'
+        assert any(b.text == 'EDIT' for b in visible_buttons)
+        assert not any(b.text in {'CREATE CLIENT', 'SEARCH', 'DELETE CLIENT'} for b in visible_buttons)
         
     def delete_tab_check(upper):
+        """Checks delete button visibility for each entity type in the 'Delete' tab."""
         screen.find('Delete').click()
         screen.wait(1)
         check_visible_tabs()
         
         visible_buttons = find_visible_buttons(screen)
 
-        assert not any(b.text == 'CREATE CLIENT' for b in visible_buttons), 'Create Client button should not be visible'
-        assert not any(b.text == 'SEARCH' for b in visible_buttons), 'Search button should not be visible'
-        assert not any(b.text == 'EDIT' for b in visible_buttons), 'Edit button should be visible'
+        assert not any(b.text in {'CREATE CLIENT', 'SEARCH', 'EDIT'} for b in visible_buttons)
         
         if upper.capitalize() == 'Clients':
             assert any(b.text == 'DELETE CLIENT' for b in visible_buttons), 'Delete Client button should be visible'
