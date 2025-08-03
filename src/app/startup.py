@@ -590,12 +590,14 @@ def build_agent_view():
         """
         Open a dialog to edit an existing flight's information.
 
-        This function searches for a flight using the `Booking ID` entered in the
-        search input field. If a matching flight is found, a dialog
-        is displayed containing input fields pre-filled with the flight's current data.
-        The user may edit the fields and choose to save the changes or cancel the operation.
+        Searches for a flight using the `Booking ID` entered in the search input field.
+        If a matching flight is found, displays a dialog with input fields pre-filled
+        with the flight's current data. The user can edit the fields and save or cancel.
 
-        If the flight is not found, a warning notification is displayed.
+        If the flight is not found, displays a warning notification.
+
+        Returns:
+            None
         """
         q = flight_edit_search_id.value.strip()
         flight = next((f for f in flights if str(f.get('Booking_ID', '')).strip() == q), None)
@@ -612,14 +614,15 @@ def build_agent_view():
 
             def save_flight():
                 """
-                Save the modified flight data and update the UI.
+                Saves the modified flight data and updates the user interface.
 
-                This function collects updated values from the input fields, modifies
-                the corresponding flight record, saves the updated list to the JSON file,
-                refreshes the UI flight table, displays a success notification, and closes
-                the dialog.
+                Collects updated values from input fields, validates and modifies the corresponding flight record,
+                saves the updated flights list to a JSON file, refreshes the flight table in the UI,
+                displays a success notification, and closes the dialog.
+
+                Returns:
+                    None
                 """
-
                 for field in flight_fields:
                     value = edit_flight_inputs[field].value
                     if 'ID' in field:
