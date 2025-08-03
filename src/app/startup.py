@@ -1197,8 +1197,20 @@ def startup() -> None:
     agent_dashboard = None
 
     def handle_login(username_input, password_input):
-        '''Checks the entered credentials and logs in the agent if valid
-        hides the welcome screen and shows the agent dashboard on successful login.In case the credentials are invalid, shows an error notification.'''
+        """
+        Validates agent login credentials and updates the UI accordingly.
+
+        If the provided username and password match the expected credentials,
+        a success notification is shown, the welcome screen is hidden, and
+        the agent dashboard is displayed. Otherwise, an error notification is shown.
+
+        Args:
+            username_input: UI input element containing the entered username.
+            password_input: UI input element containing the entered password.
+
+        Returns:
+            None
+        """
         if username_input.value == 'admin' and password_input.value == 'admin':
             ui.notify('login successful', type='positive')
             splitter.set_visibility(False)
