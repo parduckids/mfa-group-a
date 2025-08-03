@@ -541,12 +541,15 @@ def build_agent_view():
         """
         Open a dialog to edit an existing airline's information.
 
-        This function searches for an airline using the ID provided in the search
-        input field. If the airline is found, a dialog is presented with the current details
-        pre-filled. Fields 'ID' and 'Type' are shown as read-only. Users may edit the other
-        fields and choose to either save the changes or cancel the operation.
+        Searches for an airline by ID entered in the search input field. If found,
+        displays a dialog with the airline's current details pre-filled. The 'ID'
+        and 'Type' fields are read-only. Users can edit other fields and either save
+        the changes or cancel.
 
-        If no airline is found matching the entered ID, a warning notification is displayed.
+        If no matching airline is found, a warning notification is shown.
+
+        Returns:
+            None
         """
         q = airline_edit_search_id.value.strip()
         airline = next((a for a in airlines if str(a.get('ID', '')).strip() == q), None)
@@ -568,9 +571,12 @@ def build_agent_view():
                 """
                 Save the modified airline data and update the UI.
 
-                This function retrieves values from the input fields, updates the corresponding
-                airline record, writes all airline data back to the JSON file, refreshes the
-                airline table in the UI, shows a success notification, and closes the dialog.
+                Retrieves updated values from input fields, modifies the corresponding airline record,
+                saves the entire airlines list to the JSON file, refreshes the airline table in the UI,
+                displays a success notification, and closes the dialog.
+
+                Returns:
+                    None
                 """
                 for field in airline_fields:
                     airline[field] = edit_airline_inputs[field].value
