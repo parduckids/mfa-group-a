@@ -753,12 +753,15 @@ def build_agent_view():
 
     def delete_airline():
         """
-        Delete an airline and all associated flights after confirmation.
+        Initiates the deletion of an airline and its associated flights with user confirmation.
 
-        Finds an airline by ID. If found, it shows a confirmation dialog.
-        Upon confirmation, it removes the airline from the `airlines` list and
-        also removes all flights associated with that airline from the `flights` list.
-        Finally, it saves the updated lists and refreshes the UI.
+        Retrieves the airline ID from the input field and searches for a matching airline.
+        If found, prompts the user with a confirmation dialog. Upon confirmation, the airline
+        is removed from the airline list, and all related flights are also deleted. The updated
+        data is saved, the UI is refreshed, and a success notification is shown.
+
+        Returns:
+            None
         """
         q = airline_delete_search_id.value.strip()
         airline_to_delete = next((a for a in airlines if str(a.get('ID', '')).strip() == q), None)
@@ -768,6 +771,17 @@ def build_agent_view():
             return
 
         async def perform_delete():
+            """
+            Asynchronously deletes the selected airline and all associated flights.
+
+            Removes the selected airline from the airlines list and deletes all flights
+            linked to that airline. Updates the stored JSON files, reloads airline and flight
+            data, refreshes the airline dropdown options, and clears the input field. A success
+            notification is displayed, and the confirmation dialog is closed.
+
+            Returns:
+                None
+            """
             global airlines, flights
             airline_id_to_delete = airline_to_delete['ID']
             airlines = [a for a in airlines if a['ID'] != airline_id_to_delete]
@@ -836,16 +850,27 @@ def build_agent_view():
 
     def confirm_delete_single_flight(flight_to_delete):
         """
-        Display a confirmation dialog for deleting a single flight.
+        Deletes a selected flight and updates the UI and data accordingly.
 
-        Args:
-            flight_to_delete (dict): The flight object to be deleted.
+        Removes the specified flight from the flights list, saves the updated list to the JSON file,
+        and refreshes both the main table and the deletable flights list. A success notification is shown,
+        and the confirmation dialog is closed.
 
         Returns:
             None
         """
 
         async def perform_delete():
+            """
+            Asynchronously deletes the selected flight and updates the UI and data storage.
+
+            Removes the specified flight from the in-memory flights list, saves the updated list
+            to the JSON file, refreshes the main flight table and deletable flights list,
+            and closes the confirmation dialog. A success notification is displayed.
+
+            Returns:
+                None
+            """
             flights.remove(flight_to_delete)
             save_json(flight_file, flights)
             ui.notify('Flight deleted successfully.')
