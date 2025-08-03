@@ -348,7 +348,7 @@ def build_agent_view():
 
         ui.notify('Available flight created')
 
-        for inp in flight_inputs:
+        for inp in inputs.values():
             inp.value = ''
 
         # Reset date input to current time

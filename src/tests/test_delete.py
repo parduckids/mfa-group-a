@@ -2,27 +2,25 @@ import pytest
 from nicegui.testing import Screen
 from app import startup
 import platform
-from tests.utils import find_visible_buttons, get_highest_id_value, input_text
+from tests.utils import find_visible_buttons, get_highest_id_value, input_text, login_as_admin
 from pathlib import Path
 
 @pytest.mark.order(27)
 def test_delete_client(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for deleting a client.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Attempting to delete with no or invalid ID shows an error message
+        - Entering a valid client ID shows a confirmation dialog
+        - Canceling the dialog prevents deletion
+        - Confirming the dialog deletes the client and associated flights
+        - A success message is shown
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Clients tab
     screen.find('Clients').click()
@@ -70,22 +68,20 @@ def test_delete_client(screen: Screen):
     
 @pytest.mark.order(28)
 def test_delete_airline(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for deleting an airline.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Attempting to delete with no or invalid ID shows an error message
+        - Entering a valid airline ID shows a confirmation dialog
+        - Canceling the dialog prevents deletion
+        - Confirming the dialog deletes the airline and associated flights
+        - A success message is shown
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Airlines tab
     screen.find('Airlines').click()
@@ -133,22 +129,20 @@ def test_delete_airline(screen: Screen):
     
 @pytest.mark.order(29)
 def test_delete_flight_bookings(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for deleting a booked flight.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - A booked flight can be selected and deleted via dropdown and button
+        - A confirmation dialog is shown before deletion
+        - Canceling the dialog prevents deletion
+        - Confirming the dialog deletes the booking
+        - A success message is shown
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)  
     
     # Flights tab
     screen.find('Flights').click()
@@ -187,22 +181,20 @@ def test_delete_flight_bookings(screen: Screen):
 
 @pytest.mark.order(30)
 def test_delete_available_flights(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for deleting an available flight.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Attempting to delete with no or invalid ID shows an error message
+        - Entering a valid flight ID shows a confirmation dialog
+        - Canceling the dialog prevents deletion
+        - Confirming the dialog deletes the available flight
+        - A success message is shown
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Available flights tab
     screen.find('Available Flights').click()

@@ -5,6 +5,16 @@ from pathlib import Path
 
 @pytest.mark.order(1)
 def test_load_json_no_path(tmp_path):
+    """
+    Test that loading a non-existent JSON file returns the provided default.
+
+    This test verifies that:
+        - If the file does not exist, the function returns the default value
+        - The default value in this case is an empty dictionary
+
+    Args:
+        tmp_path (Path): Pytest fixture for creating a temporary directory.
+    """
     # Create a temp file using pytest fixture
     path = tmp_path / "missing.json"
     
@@ -14,6 +24,15 @@ def test_load_json_no_path(tmp_path):
     
 @pytest.mark.order(2)
 def test_load_json_path(tmp_path):
+    """
+    Test that loading an existing JSON file returns the correct data.
+
+    This test verifies that:
+        - The data saved in the file is correctly deserialized by load_json
+
+    Args:
+        tmp_path (Path): Pytest fixture for creating a temporary directory.
+    """
     # Create a temp file using pytest fixture
     path = tmp_path / "data.json"
     
@@ -27,6 +46,18 @@ def test_load_json_path(tmp_path):
     
 @pytest.mark.order(3)
 def test_save_json(tmp_path, monkeypatch):
+    """
+    Test that save_json correctly writes data to a file.
+
+    This test verifies that:
+        - The JSON file is created at the correct path
+        - The contents of the file match the original data
+        - The global data_dir is temporarily patched to the test path
+
+    Args:
+        tmp_path (Path): Pytest fixture for creating a temporary directory.
+        monkeypatch (MonkeyPatch): Pytest fixture to modify module attributes.
+    """
     # Override the global variable 
     monkeypatch.setattr('app.startup.data_dir', tmp_path)
     

@@ -4,6 +4,16 @@ import pytest
     
 @pytest.mark.order(4)
 def test_splitter_initial(screen: Screen):
+    """
+    Verifies the initial state of the splitter layout on application load.
+
+    This test checks that:
+        - The initial width of both panels is set to 50%
+        - All expected UI elements are visible, including login and search fields
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
     screen.open('/')
     
     # Check the initial screen width
@@ -23,6 +33,16 @@ def test_splitter_initial(screen: Screen):
     
 @pytest.mark.order(5)
 def test_splitter_click_left(screen: Screen):
+    """
+    Verifies the splitter behavior when the left panel (Agent Login) is clicked.
+
+    This test checks that:
+        - The initial width is 50%
+        - Clicking the left panel expands it to 90% width
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
     screen.open('/')
     
     # Check the initial screen width
@@ -41,6 +61,16 @@ def test_splitter_click_left(screen: Screen):
     
 @pytest.mark.order(6)
 def test_splitter_click_right(screen: Screen):
+    """
+    Verifies the splitter behavior when the right panel (Flight Search) is clicked.
+
+    This test checks that:
+        - The initial width is 50%
+        - Clicking the right panel shrinks it to 10% width
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
     screen.open('/')
     
     # Check the initial screen width

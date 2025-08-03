@@ -1,34 +1,37 @@
 import pytest
 from nicegui.testing import Screen
 from app import startup
-from tests.utils import find_visible_buttons, complete_fields
+from tests.utils import find_visible_buttons, complete_fields, login_as_admin
 
 @pytest.mark.order(11)
 def test_create_client(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for creating a new client.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Submitting the form with empty fields shows a validation error
+        - Filling out the form correctly allows client creation
+        - A success message is shown with the generated client ID
 
-    # Login
-    buttons_login = screen.find_all_by_tag('button')
-    visible_buttons_login = [btn for btn in buttons_login if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
-    # Clients tab
+    # Navigate to Clients > Create
     screen.find('Clients').click()
     screen.wait(0.5)
-    
     screen.find('Create').click()
-    screen.wait(6)
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
         
+    # Attempt to submit empty form
+    create_client = find_visible_buttons(screen)
+    visible_buttons_create_client = [btn for btn in create_client if btn.is_displayed()]
+    next(b for b in visible_buttons_create_client if b.text == 'CREATE CLIENT').click()
+    screen.should_contain('Please fill in all required fields.')
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
+        
+    # Fill in the required fields
     names = [
         'Name', 'Address Line 1', 'Address Line 2',
         'Address Line 3', 'City', 'State', 'Zip Code', 'Country',
@@ -38,48 +41,36 @@ def test_create_client(screen: Screen):
         'test name', 'test address', '', '', 'test city', '',
         'test zip code', 'test country', 'test phone number'
     ]
-        
-    create_client = find_visible_buttons(screen)
-    visible_buttons_create_client = [btn for btn in create_client if btn.is_displayed()]
-    next(b for b in visible_buttons_create_client if b.text == 'CREATE CLIENT').click()
-    screen.should_contain('Please fill in all required fields.')
-    screen.wait(6) # Wait for the notification to disappear so the button is clickable
-        
-    # Input the data fields for creating the client
+    
     complete_fields(screen, names, texts)    
     screen.wait(0.5)
     screen.should_not_contain('This field is required')
 
-    # Ensure client is created and the tab has been changed
+    # Submit and verify
     next(b for b in visible_buttons_create_client if b.text == 'CREATE CLIENT').click()
     screen.wait(1)
     screen.should_contain('Client created with ID')
     
 @pytest.mark.order(12)
 def test_create_airline(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for creating a new airline.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Submitting without a company name triggers a validation error
+        - Providing a valid name allows airline creation
+        - A success message is shown with the generated airline ID
 
-    # Login
-    buttons_login = screen.find_all_by_tag('button')
-    visible_buttons_login = [btn for btn in buttons_login if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Airlines tab
     screen.find('Airlines').click()
-    screen.wait(6)
-    
+    screen.wait(0.5)
     screen.find('Create').click()
-    screen.wait(1)
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     create_airline = find_visible_buttons(screen)
     visible_buttons_create_airline = [btn for btn in create_airline if btn.is_displayed()]
@@ -102,29 +93,24 @@ def test_create_airline(screen: Screen):
     
 @pytest.mark.order(13)
 def test_create_flight_booking(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for creating a new flight booking.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Submitting with no client or flight selected shows a validation error
+        - Selecting valid dropdown options allows booking creation
+        - A success message confirms the booking was created
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Flights tab
     screen.find('Flights Bookings').click()
     screen.wait(0.5)
-    
     screen.find('Create Booking').click()
-    screen.wait(6)
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     create_booking = find_visible_buttons(screen)
     visible_buttons_create_booking = [btn for btn in create_booking if btn.is_displayed()]
@@ -148,29 +134,25 @@ def test_create_flight_booking(screen: Screen):
     
 @pytest.mark.order(14)
 def test_create_available_flight(screen: Screen):
-    screen.open('/')
-    
-    # Expand the panel
-    screen.find('Agent Login').click()
-    screen.wait(0.5)
+    """
+    End-to-end test for creating a new available flight.
 
-    # Fill in credentials
-    inputs = screen.find_all_by_tag('input')
-    inputs[0].send_keys('admin')  
-    inputs[1].send_keys('admin')  
+    This test verifies that:
+        - Submitting with missing data shows a validation error
+        - Completing required fields and selecting dropdowns allows creation
+        - A success message confirms the flight was created
 
-    # Login
-    login_button = find_visible_buttons(screen)
-    visible_buttons_login = [btn for btn in login_button if btn.is_displayed()]
-    next(b for b in visible_buttons_login if b.text == 'LOGIN').click()
-    screen.wait(0.5)
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
+    """
+    login_as_admin(screen)
     
     # Flights tab
     screen.find('Available Flights').click()
     screen.wait(0.5)
     
     screen.find('Create Available Flight').click()
-    screen.wait(6)
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
 
     selects = screen.find_all_by_class('q-select')
     
