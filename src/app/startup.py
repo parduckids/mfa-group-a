@@ -141,7 +141,7 @@ def build_agent_view():
         If no clients exist, returns 1.
 
         Returns:
-            int: The next available flight ID.
+            int: The next available Booking ID.
         """
         if flights:
             return max(int(f.get('Booking_ID', 0)) for f in flights) + 1
