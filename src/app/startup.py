@@ -803,6 +803,8 @@ def build_agent_view():
         Searches for a flight by Flight_ID. If found, it presents a confirmation dialog.
         Upon confirmation, it removes the flight from the `available_flights` list,
         saves the updated list to the JSON file, and refreshes the UI.
+        It does not delete all associated records as the flight may be removed but the same passenger with the same
+        airline might be redirected onto a different flight
         """
         q = available_flight_delete_search_id.value.strip()
 
@@ -838,6 +840,9 @@ def build_agent_view():
 
         Args:
             flight_to_delete (dict): The flight object to be deleted.
+
+        Returns:
+            None
         """
 
         async def perform_delete():
@@ -867,6 +872,9 @@ def build_agent_view():
 
         Args:
             client_id (int): The ID of the client whose flights should be listed.
+
+        Returns:
+            None
         """
         deletable_flights_container.clear()
         if not client_id:
@@ -1134,7 +1142,25 @@ def startup() -> None:
     """Initializes the application, setting up the login screen and the protected agent dashboard."""
 
     def perform_flight_search(client_input, airline_input, container, all_clients, all_airlines, all_flights):
-        """Searches for all matching flights and displays a card for each."""
+        """
+        Searches for flights matching the selected client and airline IDs, and displays results.
+
+        Retrieves values from the client and airline input fields, filters the list of all flights to find matches,
+        and displays a card for each found flight in the provided UI container. If no matching flights are found,
+        an error card is shown.
+
+        Args:
+            client_input: UI input element containing the selected client ID.
+            airline_input: UI input element containing the selected airline ID.
+            container: UI container where results (flight cards) will be displayed.
+            all_clients: List of all clients (each as a dictionary with keys like 'ID' and 'Name').
+            all_airlines: List of all airlines (each as a dictionary with keys like 'ID' and 'Company Name').
+            all_flights: List of all flights (each as a dictionary with keys like 'Client_ID', 'Airline_ID',
+                         'Date', 'Start City', 'End City').
+
+        Returns:
+            None. Results are rendered directly in the provided container.
+        """
         client_q = client_input.value
         airline_q = airline_input.value
 
