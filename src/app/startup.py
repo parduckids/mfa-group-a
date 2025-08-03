@@ -808,7 +808,9 @@ def build_agent_view():
         with ui.dialog() as dialog, ui.card():
             ui.label(f"Are you sure you want to delete flight {q}?")
             with ui.row().classes('w-full justify-end'):
-                ui.button('Cancel', on_click=dialog.close)
+                ui.button('Cancel', on_click=dialog.close).classes(
+                                'border border-black text-black bg-white'
+                            )
                 ui.button('Yes, delete', on_click=perform_delete, color='red')
         dialog.open()
 
