@@ -3,6 +3,7 @@ import json
 from tests.utils import test_clients_file
 import time
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 parameters = [10, 100, 500, 1000, 2500, 5000, 7500, 10000, 20000, 40000, 60000, 80000, 100000]
 size_data = []
@@ -76,5 +77,9 @@ def generate_plot(size_data, perf_data):
         plt.text(x, y, f"{y:.2f}s", fontsize=8, ha='right', va='bottom')
 
     plt.tight_layout()
-    plt.savefig("screenshots/loading_times.png", dpi=150)
+    
+    screenshots_path = Path(__file__).resolve().parent.parent.parent / 'screenshots' / 'loading_times.png'
+    screenshots_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(screenshots_path, dpi=150)
+    
     plt.close()
