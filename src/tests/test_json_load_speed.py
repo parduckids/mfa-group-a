@@ -4,7 +4,7 @@ from tests.utils import test_clients_file
 import time
 import matplotlib.pyplot as plt
 
-parameters = [10, 50, 100, 500, 1000, 2500, 5000, 7500, 10000, 20000, 40000, 60000, 80000, 10000]
+parameters = [10, 100, 500, 1000, 2500, 5000, 7500, 10000, 20000, 40000, 60000, 80000, 100000]
 size_data = []
 perf_data = []
 
@@ -60,10 +60,21 @@ def generate_plot(size_data, perf_data):
         perf_data (List[float]): Corresponding load times in seconds.
     """
     plt.figure(figsize=(10, 6))
-    plt.plot(size_data, perf_data, marker='o')
-    plt.title("JSON Client File Loading Time vs File Size")
-    plt.xlabel("Number of Clients")
-    plt.ylabel("Loading Time (seconds)")
-    plt.grid(True)
+    plt.plot(size_data, perf_data, marker='o', linestyle='-', linewidth=2, markersize=6)
+
+    plt.title("JSON File Loading Performance", fontsize=14, weight='bold', pad=15)
+    plt.xlabel("Number of Clients", fontsize=12)
+    plt.ylabel("Loading Time (seconds)", fontsize=12)
+
+    # Optional: add gridlines and light ticks
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+
+    # Optional: add data point labels
+    for x, y in zip(size_data, perf_data):
+        plt.text(x, y, f"{y:.2f}s", fontsize=8, ha='right', va='bottom')
+
     plt.tight_layout()
-    plt.savefig("screenshots/loading_times.png")
+    plt.savefig("screenshots/loading_times.png", dpi=150)
+    plt.close()

@@ -55,17 +55,17 @@ Each file groups related functionality for maintainability and clarity. This als
 To run all test files in the specified order:
 
 ```bash
-pytest
+pytest src
 ```
 To run a specific test folder:
 
 ```bash
-pytest tests/
+pytest src/tests/
 ```
 To run a specific test file:
 
 ```bash
-pytest tests/test_client_create.py
+pytest src/tests/test_client_create.py
 ```
 
 To run any of the above commands with more detailed log output:
