@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 template_types = ['clients', 'flights', 'airlines', 'available_flights']
-parameters = [100, 1000, 10000, 30000, 60000, 100000]
+parameters = [20000, 40000, 60000, 80000, 100000]
 perf_results = {
     t: {
         "sizes": [],       
