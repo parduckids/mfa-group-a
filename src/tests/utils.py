@@ -117,3 +117,33 @@ def login_as_admin(screen):
     login_buttons = [btn for btn in screen.find_all_by_tag('button') if btn.is_displayed()]
     next(b for b in login_buttons if b.text == 'LOGIN').click()
     screen.wait(0.5)
+    
+def generate_test_clients(file_path: Path, num_entries: int):
+    """Generate a test clients.json file with the specified number of entries."""
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    data = []
+    for i in range(1, num_entries + 1):
+        data.append({
+            "ID": i,
+            "Type": "Client",
+            "Name": f"Test Name {i}",
+            "Address Line 1": f"Test Address {i}",
+            "Address Line 2": "",
+            "Address Line 3": "",
+            "City": "Test City",
+            "State": "",
+            "Zip Code": f"{10000 + i}",
+            "Country": "Test Country",
+            "Phone Number": f"123-456-{1000 + i}"
+        })
+    with file_path.open('w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
+
+@pytest.fixture(scope='function')
+def test_clients_file(request):
+    size = request.param
+    file_path = Path(f'src/data/clients_test_{size}.json')
+    generate_test_clients(file_path, size)
+    yield file_path
+    if file_path.exists():
+        file_path.unlink()
