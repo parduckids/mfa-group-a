@@ -11,6 +11,8 @@ The test suite is designed to verify the functionality of the NiceGUI web applic
 - Home page view and functionalities
 - Authentication (login/logout)
 - Agent Dashboard (create, view, edit, delete)
+  - visibility of the correct tabs
+  - ability to create, view, edit and delete records
 - UI-level behaviors using Selenium and `nicegui.testing.Screen`
 
 ---
@@ -32,6 +34,7 @@ tests/
 ├── test_view.py             # View clients, airlines, bookings, flights
 ├── test_edit.py             # Edit clients, airlines, bookings, flights
 ├── test_delete.py           # Delete clients, airlines, bookings, flights
+├── test_json_load_speed.py  # Load speed of json files of different sizes
 ```
 Each file groups related functionality for maintainability and clarity. This also enables selective execution of test groups during development.
 
@@ -41,6 +44,7 @@ Each file groups related functionality for maintainability and clarity. This als
 - **Selenium (via NiceGUI)**: To simulate user interaction with the UI
 - **NiceGUI's `Screen` helper**: Simplifies locating elements and running browser-based tests
 - **pytest-order**: Used to control the order of execution of the tests
+- **matplotlib**: Used for graph generation
 
 ---
 
@@ -48,10 +52,12 @@ Each file groups related functionality for maintainability and clarity. This als
 
 #### To run all tests:
 
+To run all test files in the specified order:
+
 ```bash
 pytest
 ```
-To run all test files in the specified order:
+To run a specific test folder:
 
 ```bash
 pytest tests/
@@ -61,6 +67,13 @@ To run a specific test file:
 ```bash
 pytest tests/test_client_create.py
 ```
+
+To run any of the above commands with more detailed log output:
+
+```bash
+pytest -s
+```
+
 Test Lifecycle
 Each test opens the app, performs UI actions (like filling forms or clicking buttons), and asserts visible outcomes (such as notifications, table contents, or tab visibility).
 
@@ -72,10 +85,14 @@ Use `aria-label` or custom data attributes for reliable input selection.
 
 Take screenshots after completion to capture the state of the app at the end of the test.
 
+The `load_speed_json` test does not interact with the UI but measures JSON loading performance across varying dataset sizes and saves a performance graph to the screenshots folder.
+
 #### How Data Is Handled
 Some tests create dummy records (e.g., clients or flights). 
 
 Where possible tests clean up after themselves (e.g., delete test records).
+
+The `load_speed_json` test generates a temporary JSON file with dummy client data, which are deleted after each run.
 
 Shared fixtures can be added in `conftest.py` for reusability and cleanup hooks.
 
@@ -88,7 +105,7 @@ Test order is set with the purpose to allow for tests to create, view, edit and 
 - Readable, maintainable code
 - Reusable setup and teardown logic
 - Tests mimic real user behavior through the UI
-- Easily debuggable with visual or logged output
+- Easily debuggable with visual output
 
 #### Limitations
 - UI tests are slower than unit tests due to browser interaction
@@ -96,12 +113,12 @@ Test order is set with the purpose to allow for tests to create, view, edit and 
 - If validation logic runs on blur or keypress, tests may need to simulate real typing carefully
 
 #### Output Files
-Screenshots are saved in tests/screenshots/
+Screenshots of all tests and a graph of the `test_json_load_speed` test are saved in `src/screenshots/`
 
 #### Cleanup and Maintenance
 - Keep test data separate from production data
 - Clean up test-created records when possible
-- Periodically review old screenshots/logs in tests/screenshots/
+- Periodically review old screenshots in src/screenshots/
 
 #### Suggested Improvements
 - <strong>Modularize Repeated Logic</strong>:
