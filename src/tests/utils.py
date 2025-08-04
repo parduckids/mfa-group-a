@@ -5,6 +5,7 @@ from pathlib import Path
 import platform
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from typing import Literal
 
 # Use CMD on macOS, CTRL elsewhere for keyboard shortcuts
 mod = Keys.COMMAND if platform.system() == 'Darwin' else Keys.CONTROL
@@ -117,59 +118,86 @@ def login_as_admin(screen):
     login_buttons = [btn for btn in screen.find_all_by_tag('button') if btn.is_displayed()]
     next(b for b in login_buttons if b.text == 'LOGIN').click()
     screen.wait(0.5)
-    
-def generate_test_clients(file_path: Path, num_entries: int):
+        
+def generate_test_data(file_path: Path, num_entries: int, template_type: Literal['clients', 'flights', 'airlines', 'available_flights']):
     """
-    Generate a mock JSON file containing a list of test client entries.
-
-    This utility function creates a file at the given path containing a list
-    of client dictionaries with consistent mock data. It is used for testing
-    loading performance and data handling functionality.
+    Generate a mock JSON file with test data for the specified template type.
 
     Args:
         file_path (Path): The path where the JSON file should be saved.
-        num_entries (int): The number of mock client records to generate.
+        num_entries (int): Number of entries to generate.
+        template_type (str): One of 'clients', 'flights', 'airlines', or 'available_flights'.
     """
     file_path.parent.mkdir(parents=True, exist_ok=True)
     data = []
+
     for i in range(1, num_entries + 1):
-        data.append({
-            "ID": i,
-            "Type": "Client",
-            "Name": f"Test Name {i}",
-            "Address Line 1": f"Test Address {i}",
-            "Address Line 2": "",
-            "Address Line 3": "",
-            "City": "Test City",
-            "State": "",
-            "Zip Code": f"{10000 + i}",
-            "Country": "Test Country",
-            "Phone Number": f"123-456-{1000 + i}"
-        })
+        if template_type == 'clients':
+            data.append({
+                "ID": i,
+                "Type": "Client",
+                "Name": f"Test Name {i}",
+                "Address Line 1": f"Test Address {i}",
+                "Address Line 2": "",
+                "Address Line 3": "",
+                "City": "Test City",
+                "State": "",
+                "Zip Code": f"{10000 + i}",
+                "Country": "Test Country",
+                "Phone Number": f"123-456-{1000 + i}"
+            })
+        elif template_type == 'flights':
+            data.append({
+                "Booking_ID": i,
+                "Client_ID": (i % 5) + 1,
+                "Airline_ID": (i % 2) + 1,
+                "Flight_ID": i,
+                "Date": "2026-12-01T10:00",
+                "Start City": f"City {i}",
+                "End City": f"Destination {i}",
+                "Type": "Flight"
+            })
+        elif template_type == 'airlines':
+            data.append({
+                "ID": i,
+                "Type": "Airline",
+                "Company Name": f"Airline {i}"
+            })
+        elif template_type == 'available_flights':
+            data.append({
+                "Flight_ID": i,
+                "Airline_ID": (i % 2) + 1,
+                "Date": "2026-12-01T10:00",
+                "Start City": f"Start City {i}",
+                "End City": f"End City {i}",
+                "Type": "Flight"
+            })
+        else:
+            raise ValueError(f"Unsupported template type: {template_type}")
+
     with file_path.open('w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
 
 @pytest.fixture(scope='function')
-def test_clients_file(request):
+def test_json_file(request):
     """
-    Pytest fixture to provide a temporary JSON file with test client data.
+    Pytest fixture to generate a temporary JSON file for a given data template.
 
-    This fixture generates a mock JSON file with a specified number of client
-    entries (based on the test parameter), yields the file path for use in a test,
-    and then cleans up the file after the test completes.
-
-    Used in conjunction with `@pytest.mark.parametrize(..., indirect=True)` to
-    dynamically create and clean up test datasets.
+    Accepts a tuple (size, template_type) and creates the corresponding JSON file.
+    Cleans up the file after the test completes.
 
     Args:
-        request (FixtureRequest): The pytest request object, containing the parameter.
+        request (FixtureRequest): Contains the (size, template_type) tuple.
 
     Yields:
-        Path: The file path to the generated JSON client file.
+        Path: Path to the generated JSON file.
     """
-    size = request.param
-    file_path = Path(f'src/data/clients_test_{size}.json')
-    generate_test_clients(file_path, size)
+    size, template_type = request.param
+    file_path = Path(__file__).resolve().parent.parent / 'data' / f'{template_type}_test_{size}.json'
+
+    generate_test_data(file_path, size, template_type)
+
     yield file_path
+
     if file_path.exists():
         file_path.unlink()
