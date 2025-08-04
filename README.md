@@ -23,6 +23,7 @@
   - [Potential Future Features](#potential-future-features)
   - [Installation](#installation)
   - [Usage](#usage)
+  - [Testing](TESTING.md)
   - [Contributors](#contributors)
 
 ---
