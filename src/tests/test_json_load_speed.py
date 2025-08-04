@@ -8,12 +8,27 @@ parameters = [10, 50, 100, 500, 1000, 2500, 5000, 7500, 10000, 20000, 40000, 600
 size_data = []
 perf_data = []
 
+@pytest.mark.order(31)
 @pytest.mark.parametrize(
     'test_clients_file', 
     parameters, 
     indirect=True
 )
 def test_loading_speed(test_clients_file):
+    """
+    Performance test for measuring JSON client file loading speed.
+
+    This test benchmarks how long it takes to load a JSON file containing a
+    varying number of client records. It verifies that:
+        - The JSON file can be successfully opened and parsed
+        - The number of records matches the test parameter
+        - The loading time is recorded for performance plotting
+
+    After the last test case (largest dataset), a performance graph is generated.
+
+    Args:
+        test_clients_file (Path): Path to the generated JSON file with client data.
+    """
     start = time.perf_counter()
 
     with open(test_clients_file, 'r', encoding='utf-8') as f:
@@ -33,6 +48,17 @@ def test_loading_speed(test_clients_file):
         generate_plot(size_data, perf_data)
     
 def generate_plot(size_data, perf_data):
+    """
+    Generate and save a performance graph of loading time vs file size.
+
+    This function creates a line chart showing how long it took to load
+    JSON files of increasing size during the test run. The chart is saved
+    as an image to the screenshots directory.
+
+    Args:
+        size_data (List[int]): List of client counts for each test case.
+        perf_data (List[float]): Corresponding load times in seconds.
+    """
     plt.figure(figsize=(10, 6))
     plt.plot(size_data, perf_data, marker='o')
     plt.title("JSON Client File Loading Time vs File Size")
@@ -41,4 +67,3 @@ def generate_plot(size_data, perf_data):
     plt.grid(True)
     plt.tight_layout()
     plt.savefig("screenshots/loading_times.png")
-    #plt.show()

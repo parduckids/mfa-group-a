@@ -119,7 +119,17 @@ def login_as_admin(screen):
     screen.wait(0.5)
     
 def generate_test_clients(file_path: Path, num_entries: int):
-    """Generate a test clients.json file with the specified number of entries."""
+    """
+    Generate a mock JSON file containing a list of test client entries.
+
+    This utility function creates a file at the given path containing a list
+    of client dictionaries with consistent mock data. It is used for testing
+    loading performance and data handling functionality.
+
+    Args:
+        file_path (Path): The path where the JSON file should be saved.
+        num_entries (int): The number of mock client records to generate.
+    """
     file_path.parent.mkdir(parents=True, exist_ok=True)
     data = []
     for i in range(1, num_entries + 1):
@@ -141,6 +151,22 @@ def generate_test_clients(file_path: Path, num_entries: int):
 
 @pytest.fixture(scope='function')
 def test_clients_file(request):
+    """
+    Pytest fixture to provide a temporary JSON file with test client data.
+
+    This fixture generates a mock JSON file with a specified number of client
+    entries (based on the test parameter), yields the file path for use in a test,
+    and then cleans up the file after the test completes.
+
+    Used in conjunction with `@pytest.mark.parametrize(..., indirect=True)` to
+    dynamically create and clean up test datasets.
+
+    Args:
+        request (FixtureRequest): The pytest request object, containing the parameter.
+
+    Yields:
+        Path: The file path to the generated JSON client file.
+    """
     size = request.param
     file_path = Path(f'src/data/clients_test_{size}.json')
     generate_test_clients(file_path, size)
