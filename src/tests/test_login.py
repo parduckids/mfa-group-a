@@ -64,7 +64,7 @@ def test_wrong_password(screen: Screen) -> None:
     screen.find('invalid credentials')
     screen.should_contain('Username')
     screen.should_contain('Password')
-    screen.wait(6) # Wait for the notification to dissappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     # Confirm failed login with wrong username and wrong password
     inputs[0].click()
@@ -83,7 +83,7 @@ def test_wrong_password(screen: Screen) -> None:
     screen.find('invalid credentials')
     screen.should_contain('Username')
     screen.should_contain('Password')
-    screen.wait(6) # Wait for the notification to dissappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
 
     # Confirm failed login with wrong username and correct password
     inputs[0].click()

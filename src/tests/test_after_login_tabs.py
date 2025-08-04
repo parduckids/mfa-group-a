@@ -83,7 +83,7 @@ def test_tabs_after_login(screen: Screen):
         assert not any(b.text in {'CREATE CLIENT', 'SEARCH', 'DELETE CLIENT'} for b in visible_buttons)
         
     def delete_tab_check(upper):
-        """Checks delete button visibility for each entity type in the 'Delete' tab."""
+        """Checks visibility of the 'Delete' button in the 'Delete' tab."""
         screen.find('Delete').click()
         screen.wait(1)
         check_visible_tabs()
