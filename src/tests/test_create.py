@@ -178,7 +178,7 @@ def test_create_available_flight(screen: Screen):
     screen.wait(0.5)
     screen.should_not_contain('This field is required')
     
-    # Use default for the date fields
+    # Use default data for the other fields
 
     # Ensure flight is created and the tab has been changed
     next(b for b in visible_buttons_create_flight if b.text == 'CREATE FLIGHT').click()

@@ -1,7 +1,7 @@
 import pytest
 from nicegui.testing import Screen
 from app import startup
-from tests.utils import mod, find_visible_buttons, get_highest_id_value, input_text, login_as_admin
+from tests.utils import find_visible_buttons, get_highest_id_value, input_text, login_as_admin
 from pathlib import Path
 
 @pytest.mark.order(15)
@@ -9,10 +9,12 @@ def test_view_client(screen: Screen):
     """
     End-to-end test for viewing client data.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Clients > View
-        - Assert presence of sample client data
+    This test verifies that:
+        - Admin can log in and navigate to the Clients > View section
+        - Sample client data is correctly displayed on the page
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -36,10 +38,12 @@ def test_view_airline(screen: Screen):
     """
     End-to-end test for viewing airline data.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Airlines > View
-        - Assert presence of sample airline data
+    This test verifies that:
+        - Admin can log in and navigate to the Airlines > View section
+        - Sample airline data is correctly displayed on the page
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -60,10 +64,13 @@ def test_view_flights_bookings(screen: Screen):
     """
     End-to-end test for viewing flight bookings.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Flights Bookings > View Bookings
-        - Assert presence of booking fields and data
+    This test verifies that:
+        - Admin can log in and navigate to Flights Bookings > View Bookings
+        - Booking-related fields are present
+        - Data is displayed and not empty
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -83,10 +90,12 @@ def test_view_available_flights(screen: Screen):
     """
     End-to-end test for viewing available flights.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Available Flights > View Available Flight
-        - Assert presence of sample flight route data
+    This test verifies that:
+        - Admin can log in and navigate to Available Flights > View Available Flight
+        - Route-related flight data is displayed and visible
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -105,13 +114,14 @@ def test_view_available_flights(screen: Screen):
 @pytest.mark.order(19)
 def test_view_client_search(screen: Screen):
     """
-    End-to-end test for searching clients in the View tab.
+    End-to-end test for client search functionality in the View tab.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Clients > View
-        - Perform search with invalid ID (expect no results)
-        - Perform search with valid ID (expect results)
+    This test verifies that:
+        - Searching with an invalid client ID displays no results
+        - Searching with a valid client ID displays the expected result
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -123,7 +133,7 @@ def test_view_client_search(screen: Screen):
     screen.wait(0.5)
     
     input_text(screen, text='wrong')
-    screen.wait(6) # wait for the notification to disappear 
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable 
     
     search_button = find_visible_buttons(screen)
     visible_buttons_search = [btn for btn in search_button if btn.is_displayed()]
@@ -142,13 +152,14 @@ def test_view_client_search(screen: Screen):
 @pytest.mark.order(20)
 def test_view_airline_search(screen: Screen):
     """
-    End-to-end test for searching airlines in the View tab.
+    End-to-end test for airline search functionality in the View tab.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Airlines > View
-        - Perform search with invalid ID (expect no results)
-        - Perform search with valid ID (expect results)
+    This test verifies that:
+        - Searching with an invalid airline ID displays no results
+        - Searching with a valid airline ID displays the expected result
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -160,7 +171,7 @@ def test_view_airline_search(screen: Screen):
     screen.wait(0.5)
     
     input_text(screen, text='wrong')
-    screen.wait(6) # wait for the notification to disappear 
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable 
     
     search_button = find_visible_buttons(screen)
     visible_buttons_search = [btn for btn in search_button if btn.is_displayed()]
@@ -179,13 +190,14 @@ def test_view_airline_search(screen: Screen):
 @pytest.mark.order(21)
 def test_view_flight_bookings_search(screen: Screen):
     """
-    End-to-end test for searching flight bookings in the View tab.
+    End-to-end test for flight bookings search functionality in the View tab.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Flights Bookings > View Bookings
-        - Perform search with invalid client ID (expect no results)
-        - Perform search with valid client ID (expect results)
+    This test verifies that:
+        - Searching with an invalid client ID displays no results
+        - Searching with a valid client ID displays the expected result
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -197,7 +209,7 @@ def test_view_flight_bookings_search(screen: Screen):
     screen.wait(0.5)
     
     input_text(screen, text='wrong')
-    screen.wait(6) # wait for the notification to disappear 
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable 
     
     search_button = find_visible_buttons(screen)
     visible_buttons_search = [btn for btn in search_button if btn.is_displayed()]
@@ -216,13 +228,14 @@ def test_view_flight_bookings_search(screen: Screen):
 @pytest.mark.order(22)
 def test_view_available_flights_search(screen: Screen):
     """
-    End-to-end test for searching available flights in the View tab.
+    End-to-end test for available flights search functionality in the View tab.
 
-    Steps:
-        - Log in as admin
-        - Navigate to Available Flights > View Available Flight
-        - Perform search with invalid flight ID (expect no results)
-        - Perform search with valid flight ID (expect results)
+    This test verifies that:
+        - Searching with an invalid flight ID displays no results
+        - Searching with a valid flight ID displays the expected result
+
+    Args:
+        screen (Screen): The NiceGUI testing screen instance.
     """
     login_as_admin(screen)
     
@@ -234,7 +247,7 @@ def test_view_available_flights_search(screen: Screen):
     screen.wait(0.5)
     
     input_text(screen, text='wrong')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     search_button = find_visible_buttons(screen)
     visible_buttons_search = [btn for btn in search_button if btn.is_displayed()]

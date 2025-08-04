@@ -1,7 +1,6 @@
 import pytest
 from nicegui.testing import Screen
 from app import startup
-import platform
 from tests.utils import find_visible_buttons, get_highest_id_value, input_text, login_as_admin
 from pathlib import Path
 
@@ -34,12 +33,12 @@ def test_delete_client(screen: Screen):
     next(b for b in visible_buttons_delete if b.text == 'DELETE CLIENT').click()
     screen.wait(1)
     screen.should_contain('Client not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     input_text(screen, text='wrong')
     next(b for b in visible_buttons_delete if b.text == 'DELETE CLIENT').click()
     screen.should_contain('Client not found')
-    screen.wait(7) # wait for the notification to disappear
+    screen.wait(7) # Wait for the notification to disappear so the button is clickable
     
     clients_path = Path(__file__).resolve().parent.parent / 'data' / 'clients.json'
     client_id = get_highest_id_value(clients_path, "ID")
@@ -95,12 +94,12 @@ def test_delete_airline(screen: Screen):
     next(b for b in visible_buttons_delete if b.text == 'DELETE AIRLINE').click()
     screen.wait(1)
     screen.should_contain('Airline not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     input_text(screen, text='wrong')
     next(b for b in visible_buttons_delete if b.text == 'DELETE AIRLINE').click()
     screen.should_contain('Airline not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     airlines_path = Path(__file__).resolve().parent.parent / 'data' / 'airlines.json'
     airlines_id = get_highest_id_value(airlines_path, 'ID')
@@ -208,13 +207,13 @@ def test_delete_available_flights(screen: Screen):
     next(b for b in visible_buttons_delete if b.text == 'DELETE AVAILABLE FLIGHT').click()
     screen.wait(1)
     screen.should_contain('Flight not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     input_text(screen, text='wrong')
     next(b for b in visible_buttons_delete if b.text == 'DELETE AVAILABLE FLIGHT').click()
     screen.wait(1)
     screen.should_contain('Flight not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     available_flights_path = Path(__file__).resolve().parent.parent / 'data' / 'available_flights.json'
     available_flights_id = get_highest_id_value(available_flights_path, 'Flight_ID')

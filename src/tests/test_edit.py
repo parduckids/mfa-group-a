@@ -2,7 +2,6 @@ import pytest
 from nicegui.testing import Screen
 from app import startup
 from selenium.webdriver.common.by import By
-import platform
 from tests.utils import find_visible_buttons, mod, input_text, get_highest_id_value, login_as_admin
 from pathlib import Path
 
@@ -35,13 +34,13 @@ def test_edit_client(screen: Screen):
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(0.5)
     screen.should_contain('Client not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     input_text(screen, text='wrong')
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(0.5)
     screen.should_contain('Client not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     clients_path = Path(__file__).resolve().parent.parent / 'data' / 'clients.json'
     client_id = get_highest_id_value(clients_path, 'ID')
@@ -99,13 +98,13 @@ def test_edit_airline(screen: Screen):
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(0.5)
     screen.should_contain('Airline not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     input_text(screen, text='wrong')
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(0.5)
     screen.should_contain('Airline not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     airlines_path = Path(__file__).resolve().parent.parent / 'data' / 'airlines.json'
     airline_id = get_highest_id_value(airlines_path, 'ID')
@@ -163,13 +162,13 @@ def test_edit_flight_bookings(screen: Screen):
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(1)
     screen.should_contain('Flight not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     input_text(screen, text='wrong')
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(0.5)
     screen.should_contain('Flight not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     flights_bookings_path = Path(__file__).resolve().parent.parent / 'data' / 'flights.json'
     flights_booking_id = get_highest_id_value(flights_bookings_path, 'Booking_ID')
@@ -227,13 +226,13 @@ def test_edit_available_flights(screen: Screen):
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(1)
     screen.should_contain('Flight not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     input_text(screen, text='wrong')
     next(b for b in visible_buttons_edit if b.text == 'EDIT').click()
     screen.wait(0.5)
     screen.should_contain('Flight not found')
-    screen.wait(6) # wait for the notification to disappear
+    screen.wait(6) # Wait for the notification to disappear so the button is clickable
     
     available_flights_path = Path(__file__).resolve().parent.parent / 'data' / 'available_flights.json'
     available_flights_id = get_highest_id_value(available_flights_path, 'Flight_ID')
