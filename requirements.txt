@@ -1,6 +1,7 @@
-jsonlines
-nicegui
-pytest-asyncio
-pytest-selenium
-pytest
-pytest-order
+jsonlines>=4.0.0
+nicegui>=2.21.1
+pytest>=8.4.1
+pytest-asyncio>=1.1.0
+pytest-selenium>=4.1.0
+pytest-order>=1.3.0
+matplotlib>=3.9.0
