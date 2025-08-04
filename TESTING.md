@@ -23,18 +23,18 @@ All test files are located in the `tests/` folder and follow a modular structure
 
 ```bash
 tests/
-├── conftest.py              # Shared fixtures
-├── utils.py                 # Shared utility functions
-├── test_load_save_json.py   # Tests for loading/saving JSON files
-├── test_home_screen.py      # Home screen appearance and functionality
-├── test_flight_search.py    # Flight search section functionality
-├── test_login.py            # Login/logout functionality
-├── test_after_login_tabs.py # Tab visibility checks after login
-├── test_create.py           # Create clients, airlines, bookings, flights
-├── test_view.py             # View clients, airlines, bookings, flights
-├── test_edit.py             # Edit clients, airlines, bookings, flights
-├── test_delete.py           # Delete clients, airlines, bookings, flights
-├── test_json_load_speed.py  # Load speed of json files of different sizes
+├── conftest.py                   # Shared fixtures
+├── utils.py                      # Shared utility functions
+├── test_load_save_json.py        # Tests for loading/saving JSON files
+├── test_home_screen.py           # Home screen appearance and functionality
+├── test_flight_search.py         # Flight search section functionality
+├── test_login.py                 # Login/logout functionality
+├── test_after_login_tabs.py      # Tab visibility checks after login
+├── test_create.py                # Create clients, airlines, bookings, flights
+├── test_view.py                  # View clients, airlines, bookings, flights
+├── test_edit.py                  # Edit clients, airlines, bookings, flights
+├── test_delete.py                # Delete clients, airlines, bookings, flights
+├── test_json_load_speed.py       # Load speed of json files of different sizes
 ```
 Each file groups related functionality for maintainability and clarity. This also enables selective execution of test groups during development.
 
@@ -45,6 +45,7 @@ Each file groups related functionality for maintainability and clarity. This als
 - **NiceGUI's `Screen` helper**: Simplifies locating elements and running browser-based tests
 - **pytest-order**: Used to control the order of execution of the tests
 - **matplotlib**: Used for graph generation
+- **pytest's parametrize**: Used in performance tests to run with multiple dataset sizes
 
 ---
 
@@ -125,7 +126,7 @@ Screenshots of all tests and a graph of the `test_json_load_speed` test are save
   - Extract further common actions (e.g. tab navigation, input clearing, button filtering) into helper functions to reduce duplication and improve readability.
 
 - <strong>Use Parametrization</strong>:
-  - Apply `@pytest.mark.parametrize` to consolidate similar tests with varying inputs (e.g. login errors, search results).
+  - Apply `@pytest.mark.parametrize` more widely to consolidate similar tests with varying inputs (e.g. login errors, search results).
 
 - <strong>Improve Test Coverage</strong>:
   - Include edge cases (e.g. empty datasets, max input lengths) and negative tests (e.g. unauthorized access).
