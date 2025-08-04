@@ -8,18 +8,22 @@
 
 ## Table of Contents
 
-- [Why NiceGUI?](#why-nicegui)
-- [Main Functionality](#main-functionality)
-  - [Public Flight Search](#public-flight-search)
-  - [Secure Agent Portal](#secure-agent-portal)
-  - [Client Management](#client-management)
-  - [Airline Management](#airline-management)
-  - [Flight Management](#flight-management)
-- [Potential Future Features](#potential-future-features)
-- [Installation](#installation)
-- [Testing](TESTING.md)
-- [Usage](#usage)
-- [Contributors](#contributors)
+- [Fly Guy - Flight Record Manager](#fly-guy---flight-record-manager)
+  - [Group Project (Group A) | University of Liverpool](#group-project-group-a--university-of-liverpool)
+    - [MSc Data Science and Artificial Intelligence - Software Development module](#msc-data-science-and-artificial-intelligence---software-development-module)
+  - [Table of Contents](#table-of-contents)
+  - [Why NiceGUI?](#why-nicegui)
+  - [Main Functionality](#main-functionality)
+    - [Public Flight Search](#public-flight-search)
+    - [Secure Agent Portal](#secure-agent-portal)
+    - [Client Management](#client-management)
+    - [Airline Management](#airline-management)
+    - [Flight Management](#flight-management)
+    - [Available Flight Management](#available-flight-management)
+  - [Potential Future Features](#potential-future-features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Contributors](#contributors)
 
 ---
 
@@ -123,7 +127,7 @@ To run this project locally, you will need Python 3.8 or higher.
 
 2.  **Install the required dependencies:**
     ```bash
-    pip install nicegui
+    pip install -r requirements.txt 
     ```
 
 ---
